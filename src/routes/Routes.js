@@ -3,6 +3,7 @@ import { Route, Routes } from "react-router-dom";
 import Login from "../components/Auth/Login";
 import Signup from "../components/Auth/Signup";
 import PasswordReset from "../components/Auth/PasswordReset";
+import Layouts from "../components/Layouts/Components/Layouts";
 
 const AppRoutes = ({ isLogin, toggleForm }) => (
   <Routes>
@@ -19,6 +20,7 @@ const AppRoutes = ({ isLogin, toggleForm }) => (
     <Route path="/signup" element={<Signup toggleForm={toggleForm} />} />
     <Route path="/login" element={<Login toggleForm={toggleForm} />} />
     <Route path="/reset/:token" element={<PasswordReset />} />
+    <Route path="/home" element={<Layouts />} />
   </Routes>
 );
 
