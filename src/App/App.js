@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import Header from "../components/Layouts/Components/Header.jsx";
 import AppRoutes from "../routes";
 import "./App.css";
 
@@ -13,6 +14,7 @@ const App = () => {
 
   return (
     <div>
+      <Header />
       <AppRoutes isLogin={isLogin} toggleForm={toggleForm} />
     </div>
   );
