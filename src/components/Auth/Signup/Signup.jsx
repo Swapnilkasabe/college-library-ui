@@ -1,10 +1,12 @@
 import React from "react";
 import { TextField, Button, Paper } from "@mui/material";
+import { useNavigate } from "react-router-dom";
 import "./Signup.css";
 
-const Signup = ({ toggleForm }) => {
+const Signup = () => {
+const navigate = useNavigate();
   const handleToggle = () => {
-    toggleForm();
+    navigate('/login');
   };
   const handleSubmit = (e) => {
     e.preventDefault(); // Prevent default form submission behavior
