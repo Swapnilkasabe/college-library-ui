@@ -1,10 +1,13 @@
 import React from "react";
 import { TextField, Button, Link, Paper } from "@mui/material";
+import { useNavigate } from "react-router-dom";
 import "./Login.css";
 
-const Login = ({ toggleForm }) => {
+const Login = () => {
+
+  const navigate = useNavigate();
   const handleToggle = () => {
-    toggleForm();
+    navigate('/signup');
   };
 
   const handleSubmit = (e) => {
