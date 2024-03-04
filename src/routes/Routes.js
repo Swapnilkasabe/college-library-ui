@@ -20,6 +20,7 @@ const AppRoutes = ({ isLogin }) => (
     <Route path="/signup" element={<Signup />} />
     <Route path="/login" element={<Login />} />
     <Route path="/reset/:token" element={<PasswordReset />} />
+    <Route path="/home" element={<Layouts />} />
   </Routes>
 );
 
