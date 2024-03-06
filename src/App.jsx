@@ -1,17 +1,17 @@
-import React, { useState } from "react";
+import React from "react";
 import AppRoutes from "./routes/Routes";
 import "./App.css";
 import AppLayout from "./Layouts/Layouts";
+import { AppContextProvider } from "./contexts/AppContext.Provider";
 
 const App = () => {
-  // State to manage login status
-  const [isLogin, setIsLogin] = useState(false);
-
   return (
-    <AppLayout>
-      {/* <Header /> */}
-      <AppRoutes isLogin={isLogin} />
-    </AppLayout>
+  // Wrapping the entire application with the context provider to provide state to components
+    <AppContextProvider>
+      <AppLayout>
+        <AppRoutes />
+      </AppLayout>
+    </AppContextProvider>
   );
 };
 
