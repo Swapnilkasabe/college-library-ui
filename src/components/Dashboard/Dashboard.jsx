@@ -1,17 +1,13 @@
-import React, { useState } from "react";
+import React from "react";
 import Sidebar from '../Siderbar/Sidebar';
-import Student from '../../Pages/Student';
-import Book from '../../Pages/Book';
-import BookLending from '../../Pages/BookLending';
-import StudentBookAssignment from '../../Pages/StudentBookAssignment';
-import BookStudentAssignment from '../../Pages/BookStudentAssignment';
+import {useAppContext} from '../../contexts/AppContext.Provider'
 import "./Dashboard.css";
 
-// Dashboard component renders the main layout of the application, including the sidebar navigation and content display.
+// Dashboard component renders the main layout of the application, including the sidebar navigation and content display
 const Dashboard = ({children}) => {
-  // State variables to manage the active sidebar item and sidebar open/close state
-  const [active, setActive] = useState("students");
-  const [sidebarOpen, setSidebarOpen] = useState(false);
+  // Accessing context values
+  const { active, setActive, sidebarOpen, setSidebarOpen } = useAppContext();
+
 
   return (
     <div className="dashboard">
