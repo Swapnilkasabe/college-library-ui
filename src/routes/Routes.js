@@ -1,5 +1,5 @@
 import React from "react";
-import { Navigate, Route, Routes } from "react-router-dom";
+import { Navigate, Outlet, Route, Routes } from "react-router-dom";
 import Login from "../components/Auth/Login/Login";
 import Signup from "../components/Auth/Signup/Signup";
 import AppLayout from "../Layouts/Layouts";
@@ -11,11 +11,11 @@ import Student from "../Pages/Student";
 import { useAppContext } from "../contexts/AppContext.Provider";
 
 // PrivateRoute component to handle routes that require authentication
-const PrivateRoute = ({ children }) => {
+const PrivateRoute = () => {
   const { isLogin } = useAppContext();
 
   // If user is logged in, render the child components, otherwise redirect to login page
-  return isLogin ? children : <Navigate to="/login" replace />;
+  return isLogin ? <Outlet /> : <Navigate to="/login" replace />;
 };
 
 // AppRoutes component defines all routes of the application
