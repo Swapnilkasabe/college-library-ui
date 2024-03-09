@@ -1,0 +1,67 @@
+.form-container {
+    margin: 10px 20px ;
+    padding: 20px;
+    width: 100%;
+    max-width: 900px
+  }
+  
+  .button-container {
+    margin-bottom: 10px;
+    display: flex;
+    justify-content: flex-end;
+    
+  }
+  .button-container > button {
+    padding: 5px;
+    font-size: 15px;
+    
+  }
+  
+  
+  .table-container {
+    margin:auto;
+    width: 100%;
+    min-width: 600px; 
+  }
+  .actions-cell > button {
+    margin-right: 8px;
+    font-size: 15px; 
+  }
+  
+  .actions-cell > button:first-child {
+    background-color: rgb(53, 123, 237);
+    color: #fff;
+    font-size: medium;
+    padding: 5px;
+  }
+  
+  .actions-cell > button:last-child {
+    background-color: rgb(227, 49, 54);
+    color: #fff;
+    font-size: medium;
+    padding: 5px;
+  }
+  
+    
+  
+  .student-table {
+    width: 100%;
+  }
+  
+  .student-table th,
+  .student-table td {
+    padding: 10px;
+    width: auto;
+  }
+  
+  .student-table th {
+    background-color: rgb(24, 33, 62);
+    color: #fff;
+    font-weight: 700;
+  }
+  
+  .actions-cell {
+    display: flex;
+    justify-content: space-around;
+  }
+  

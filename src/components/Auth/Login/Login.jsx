@@ -1,9 +1,11 @@
 import React from "react";
 import { TextField, Button, Link, Paper } from "@mui/material";
-import { useNavigate } from "react-router-dom";
+import {useNavigate } from "react-router-dom";
+import { useAppContext } from "../../../contexts/AppContext.Provider";
 import "./Login.css";
 
 const Login = () => {
+  const {setIsLogin} = useAppContext();
 
   const navigate = useNavigate();
   const handleToggle = () => {
@@ -12,6 +14,8 @@ const Login = () => {
 
   const handleSubmit = (e) => {
     e.preventDefault(); // Prevent default form submission behavior
+    setIsLogin(true);
+    navigate('/');
   };
 
   return (

@@ -1,7 +1,7 @@
 import React from 'react';
 import Grid from '@mui/material/Grid';
 import Header from '../components/Header/Header';
-import Dashboard from '../components/Dashboard/Dashboard';
+import Dashboard from '../components/Dashboard/Dashboard'; 
 import './Layouts.css';
 import { useAppContext } from "../contexts/AppContext.Provider";
 
