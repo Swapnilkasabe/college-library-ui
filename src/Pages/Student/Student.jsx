@@ -10,7 +10,10 @@ import {
   TableRow,
 } from "@mui/material";
 import "./Student.css";
+import DeleteIcon from '@mui/icons-material/Delete';
+import EditIcon from '@mui/icons-material/Edit';
 import EditStudentModal from "../../components/Modals/EditStudentModal";
+import AddStudentModal from "../../components/Modals/AddStudentModal";
 
 const Student = () => {
   // State for storing student data
@@ -27,26 +30,27 @@ const Student = () => {
   const [editingStudent, setEditingStudent] = useState(null);
 
   // State for controlling the visibility of the edit modal
-  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [isEditModalOpen, setIsEditModalOpen] = useState(false);
 
-  // Function to add a new student
-  const handleAddStudent = () => {
-    const newStudent = {
-      id: students.length + 1,
-      name: "New Student",
-      email: "newstudent@example.com",
-      phone: "000-000-0000",
-    };
-    setStudents([...students, newStudent]);
+  // State for controlling the visibility of the add modal
+  const [isAddModalOpen, setIsAddModalOpen] = useState(false);
+
+  // Function to open the add student modal
+  const openAddModal = () => {
+    setIsAddModalOpen(true);
   };
 
   const openEditModal = (student) => {
     setEditingStudent(student);
-    setIsModalOpen(true);
+    setIsEditModalOpen(true);
   };
 
-  const handleCloseModal = () => {
-    setIsModalOpen(false);
+  const handleCloseEditModal = () => {
+    setIsEditModalOpen(false);
+  };
+
+  const handleCloseAddModal = () => {
+    setIsAddModalOpen(false);
   };
 
   // Function to update a student details
@@ -57,16 +61,22 @@ const Student = () => {
     setStudents(updatedStudents);
   };
 
- // Function to delete a student
+  // Function to delete a student
   const handleDeleteStudent = (id) => {
     setStudents(students.filter((student) => student.id !== id));
+  };
+
+  // Function to add a new student
+  const handleAddStudent = (newStudent) => {
+    setStudents([...students, newStudent]);
+    setIsAddModalOpen(false);
   };
 
   return (
     <div className="form-container">
       <h2>Student Details</h2>
       <div className="button-container">
-        <Button onClick={handleAddStudent} variant="contained" color="primary">
+        <Button onClick={openAddModal}  variant="contained" color="primary">
           Add Student
         </Button>
       </div>
@@ -92,12 +102,14 @@ const Student = () => {
                   <TableCell className="actions-cell">
                     <Button
                       variant="contained"
+                      startIcon={<EditIcon />}
                       onClick={() => openEditModal(student)}
                     >
                       Edit
                     </Button>
                     <Button
                       variant="contained"
+                      startIcon={<DeleteIcon />}
                       onClick={() => handleDeleteStudent(student.id)}
                     >
                       Delete
@@ -116,10 +128,15 @@ const Student = () => {
         </Table>
       </TableContainer>
       <EditStudentModal
-        isOpen={isModalOpen}
-        onClose={handleCloseModal}
+        isOpen={isEditModalOpen}
+        onClose={handleCloseEditModal}
         student={editingStudent}
         onUpdate={handleUpdateStudent}
+      />
+      <AddStudentModal
+        isOpen={isAddModalOpen}
+        onClose={handleCloseAddModal}
+        onAdd={handleAddStudent}
       />
     </div>
   );

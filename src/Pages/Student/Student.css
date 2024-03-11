@@ -14,6 +14,8 @@
   .button-container > button {
     padding: 5px;
     font-size: 15px;
+    text-transform: none;
+
     
   }
   
@@ -26,6 +28,7 @@
   .actions-cell > button {
     margin-right: 8px;
     font-size: 15px; 
+    text-transform: none;
   }
   
   .actions-cell > button:first-child {
