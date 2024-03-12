@@ -6,6 +6,8 @@ import LibraryBooksIcon from "@mui/icons-material/LibraryBooks";
 import CloseIcon from "@mui/icons-material/Close";
 import DoubleArrowIcon from "@mui/icons-material/DoubleArrow";
 import { IconButton, Typography } from "@mui/material";
+import { Link } from "react-router-dom";
+
 
 import "./Sidebar.css";
 
@@ -27,22 +29,29 @@ const Sidebar = ({ active, setActive, sidebarOpen, setSidebarOpen }) => {
         </Typography>
       </div>
       {/* Navigation options for different sections of the application */}
+      
+      <Link to={'/student'} className="sidebar-link">
       <Typography
         variant="body1"
         component="p"
         className={`dashboard-option ${active === "student" ? "clicked" : ""}`}
         onClick={() => setActive("student")}
       >
+        
         <AccountBoxIcon className="dashboard-option-icon" /> Student
-      </Typography>
+        
+      </Typography></Link>
+      <Link to={'/book'} className="sidebar-link">
       <Typography
         variant="body1"
         component="p"
         className={`dashboard-option ${active === "book" ? "clicked" : ""}`}
-        onClick={() => setActive("book")}
+        onClick={() => {setActive("book");} }
       >
+         
         <MenuBookIcon className="dashboard-option-icon" /> Book
-      </Typography>
+        
+      </Typography></Link>
       <div className="book-lending-option">
         <Typography
           variant="body1"
@@ -55,6 +64,7 @@ const Sidebar = ({ active, setActive, sidebarOpen, setSidebarOpen }) => {
         </Typography>
         {/* Submenu options for book lending */}
         <div className="book-lending-submenu">
+        <Link to={'/studentBookAssignment'} className="sidebar-link">
           <Typography
             variant="body1"
             component="p"
@@ -63,8 +73,11 @@ const Sidebar = ({ active, setActive, sidebarOpen, setSidebarOpen }) => {
             }`}
             onClick={() => setActive("studentPage")}
           >
+            
             <AccountBoxIcon className="dashboard-option-icon" /> Student Page
-          </Typography>
+           
+          </Typography></Link>
+          <Link to={'/bookStudentAssignment'} className="sidebar-link">
           <Typography
             variant="body1"
             component="p"
@@ -73,8 +86,10 @@ const Sidebar = ({ active, setActive, sidebarOpen, setSidebarOpen }) => {
             }`}
             onClick={() => setActive("bookPage")}
           >
+           
             <MenuBookIcon className="dashboard-option-icon" /> Book Page
-          </Typography>
+    
+          </Typography></Link>
         </div>
       </div>
       {/* Toggle button to open/close the sidebar */}

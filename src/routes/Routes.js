@@ -4,10 +4,10 @@ import Login from "../components/Auth/Login/Login";
 import Signup from "../components/Auth/Signup/Signup";
 import AppLayout from "../Layouts/Layouts";
 import PasswordReset from "../components/Auth/PasswordReset/PasswordReset";
-import BookStudentAssignment from "../Pages/BookStudentAssignment";
-import StudentBookAssignment from "../Pages/StudentBookAssignment";
-import Book from "../Pages/Book";
-import Student from "../Pages/Student";
+import BookStudentAssignment from "../Pages/BookStudentAssignment/BookStudentAssignment";
+import StudentBookAssignment from "../Pages/StudentBookAssignment/StudentBookAssignment";
+import Book from "../Pages/Book/Book";
+import Student from "../Pages/Student/Student";
 import { useAppContext } from "../contexts/AppContext.Provider";
 
 // PrivateRoute component to handle routes that require authentication

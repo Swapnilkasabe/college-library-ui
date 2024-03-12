@@ -1,0 +1,21 @@
+@import url("../../utilities//common.css");
+
+.form-container {
+  margin: var(--margin) 1.25rem;
+  padding: var(--padding);
+  width: 100%;
+  max-width: 56.25rem;
+}
+
+.button-container {
+  margin-bottom: var(--margin);
+  display: flex;
+  justify-content: flex-end;
+}
+
+.button-container > button {
+  padding: var(--button-padding);
+  font-size: var(--button-font-size);
+  text-transform: none;
+}
+
