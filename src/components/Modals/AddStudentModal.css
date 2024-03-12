@@ -19,6 +19,7 @@
   margin-top: var(--modal-button-margin-top); 
   display: flex;
   justify-content: flex-end;
+  
 }
 
 .modal-buttons > button {
