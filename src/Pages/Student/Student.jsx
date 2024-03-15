@@ -1,19 +1,16 @@
 import React, { useState } from "react";
 import { Button } from "@mui/material";
-import EditStudentModal from "../../components/Modals/EditStudentModal";
-import AddStudentModal from "../../components/Modals/AddStudentModal";
-import "./Student.css";
+import StudentModal, {DefaultData} from "../../components/Modals/StudentModal";
 import GenericTable from "../../utilities/GenericTable";
+import { isEmptyString } from "../../utilities/helper";
+import "./Student.css";
 
 const Student = () => {
   // State for storing student data
   const [students, setStudents] = useState([]);
 
   // State for managing the currently edited student
-  const [editingStudent, setEditingStudent] = useState(null);
-
-  // State for controlling the visibility of the edit modal
-  const [isEditModalOpen, setIsEditModalOpen] = useState(false);
+  const [editingStudent, setEditingStudent] = useState(DefaultData);
 
   // State for controlling the visibility of the add modal
   const [isAddModalOpen, setIsAddModalOpen] = useState(false);
@@ -23,16 +20,28 @@ const Student = () => {
     setIsAddModalOpen(true);
   };
 
+  // Function to open the edit student modal
   const openEditModal = (student) => {
-    setEditingStudent(student);
-    setIsEditModalOpen(true);
+    setIsAddModalOpen(true);
+    if (student) {
+      setEditingStudent({ ...student });
+    }
   };
 
-  const handleCloseEditModal = () => {
-    setIsEditModalOpen(false);
-  };
-
+  // Function to close the add student modal
   const handleCloseAddModal = () => {
+    setIsAddModalOpen(false);
+    setEditingStudent(DefaultData);
+  };
+
+  // Function to add a new student
+  const handleAddStudent = (isEditMode) => (newStudent) => {
+    if (isEditMode) {
+      handleUpdateStudent(newStudent);
+    } else {
+      setStudents([...students, newStudent]);
+    }
+
     setIsAddModalOpen(false);
   };
 
@@ -41,25 +50,15 @@ const Student = () => {
     const updatedStudents = students.map((student) =>
       student.id === updatedStudent.id ? updatedStudent : student
     );
-    setStudents(updatedStudents);
+    setStudents([...updatedStudents]);
   };
 
-// Function to delete a student
-const handleDeleteStudent = (studentId) => {
-  console.log("Deleting student with id:", studentId);
-  const updatedStudents = students.filter((student) => student.id !== studentId);
-  console.log("Updated students:", updatedStudents);
-  setStudents(updatedStudents);
-};
-
-
-
-  // Function to add a new student
-  const handleAddStudent = (newStudent) => {
-    setStudents([...students, newStudent]);
-    setIsAddModalOpen(false);
+  // Function to delete a student
+  const handleDeleteStudent = (deletedStudent) => {
+    setStudents(students.filter((student) => student.id !== deletedStudent.id));
   };
- // Define table columns
+
+  // Define table columns
   const columns = [
     { key: "name", label: "Name" },
     { key: "id", label: "ID" },
@@ -77,22 +76,19 @@ const handleDeleteStudent = (studentId) => {
     <div className="form-container">
       <h2>Student Details</h2>
       <div className="button-container">
-        <Button onClick={openAddModal}  variant="contained" color="primary">
+        <Button onClick={openAddModal} variant="contained" color="primary">
           Add Student
         </Button>
       </div>
       {/* Display table of students */}
       <GenericTable data={students} columns={columns} actions={actions} />
-      <EditStudentModal
-        isOpen={isEditModalOpen}
-        onClose={handleCloseEditModal}
-        student={editingStudent}
-        onUpdate={handleUpdateStudent}
-      />
-      <AddStudentModal
+      <StudentModal
         isOpen={isAddModalOpen}
         onClose={handleCloseAddModal}
-        onAdd={handleAddStudent}
+        onAdd={handleAddStudent(!isEmptyString(editingStudent.id))}
+        initialStudentData={
+          isEmptyString(editingStudent.id) ? DefaultData : editingStudent
+        }
       />
     </div>
   );

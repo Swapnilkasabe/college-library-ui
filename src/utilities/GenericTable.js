@@ -33,7 +33,7 @@ const GenericTable = ({ data, columns, actions }) => {
               <TableRow key={row.id || row.code}>
                 {/* Mapping over columns to render table cells */}
                 {columns.map((column) => (
-                  <TableCell key={column.key}>{row[column.key]}</TableCell>
+                  <TableCell key={row[column.key]}>{row[column.key]}</TableCell>
                 ))}
                 {/* Actions column */}
                 <TableCell className="actions-cell">
@@ -42,7 +42,7 @@ const GenericTable = ({ data, columns, actions }) => {
                       key={index}
                       className="action-button"
                       variant="contained"
-                      onClick={() => action.handler(row.id)}
+                      onClick={() => action.handler(row)}
                     >
                       {action.label}
                     </Button>
