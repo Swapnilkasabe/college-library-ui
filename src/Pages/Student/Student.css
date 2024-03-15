@@ -1,4 +1,4 @@
-@import url("../../utilities//common.css");
+@import url("../../App.css");
 
 .form-container {
   margin: var(--margin) 1.25rem;

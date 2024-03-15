@@ -2,7 +2,6 @@ import React from "react";
 import { Navigate, Outlet, Route, Routes } from "react-router-dom";
 import Login from "../components/Auth/Login/Login";
 import Signup from "../components/Auth/Signup/Signup";
-import AppLayout from "../Layouts/Layouts";
 import PasswordReset from "../components/Auth/PasswordReset/PasswordReset";
 import BookStudentAssignment from "../Pages/BookStudentAssignment/BookStudentAssignment";
 import StudentBookAssignment from "../Pages/StudentBookAssignment/StudentBookAssignment";
@@ -27,7 +26,7 @@ const AppRoutes = () => {
       <Route path="/reset/:token" element={<PasswordReset />} />
 
       <Route element={<PrivateRoute />}>
-        <Route path="/" element={<AppLayout />} />
+        <Route path="/" element={<>Dashboard Page</>} />
         <Route path="/student" element={<Student />} />
         <Route path="/book" element={<Book />} />
         <Route
