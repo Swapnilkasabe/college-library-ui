@@ -1,0 +1,55 @@
+@import url("./common.css");
+
+.generic-table-container {
+    margin: var(--margin) 0.2em;
+    padding: var(--padding);
+    width: 100%;
+    max-width: 56.25rem;
+  }
+  
+  .button-container {
+    margin-bottom: var(--margin);
+    display: flex;
+    justify-content: flex-end;
+  }
+  
+  .table-container th {
+    font-weight: bold;
+  }
+  
+  .button-container > button {
+    padding: var(--button-padding);
+    font-size: var(--button-font-size);
+    text-transform: none;
+  }
+  
+  .table-container {
+    margin: auto;
+    width: 100%;
+    min-width: 37.5rem;
+  }
+  
+  .actions-cell > .action-button {
+    margin-right: 0.5rem;
+    font-size: var(--button-font-size);
+    text-transform: none;
+  }
+  
+  .actions-cell > .action-button:first-child {
+    background-color: var(--primary-button-bg);
+    color: var(--primary-button-text-color);
+    font-size: medium;
+    padding: var(--button-padding);
+  }
+  
+  .actions-cell > .action-button:last-child {
+    background-color: var(--secondary-button-bg);
+    color: var(--primary-button-text-color);
+    font-size: medium;
+    padding: var(--button-padding);
+  }
+  
+  .no-data-cell {
+    align-items: center;
+    text-align: center;
+}
