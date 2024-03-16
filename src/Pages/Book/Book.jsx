@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import BookModal, { DefaultData } from "../../components/Modals/BookModal";
-import GenericTable from "../../utilities/GenericTable";
+import GenericTable from "../../components/Common/GenericTable";
 import { Button } from "@mui/material";
 import { isEmptyString } from "../../utilities/helper";
 import "./Book.css";
