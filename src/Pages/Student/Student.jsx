@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { Button } from "@mui/material";
 import StudentModal, {DefaultData} from "../../components/Modals/StudentModal";
-import GenericTable from "../../utilities/GenericTable";
+import GenericTable from "../../components/Common/GenericTable";
 import { isEmptyString } from "../../utilities/helper";
 import "./Student.css";
 

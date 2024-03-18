@@ -37,16 +37,18 @@ const GenericTable = ({ data, columns, actions }) => {
                 ))}
                 {/* Actions column */}
                 <TableCell className="actions-cell">
-                  {actions.map((action, index) => (
-                    <Button
-                      key={index}
-                      className="action-button"
-                      variant="contained"
-                      onClick={() => action.handler(row)}
-                    >
-                      {action.label}
-                    </Button>
-                  ))}
+                  {actions
+                    ? actions.map((action, index) => (
+                        <Button
+                          key={index}
+                          className="action-button"
+                          variant="contained"
+                          onClick={() => action.handler(row)}
+                        >
+                          {action.label}
+                        </Button>
+                      ))
+                    : null}
                 </TableCell>
               </TableRow>
             ))

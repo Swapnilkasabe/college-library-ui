@@ -23,7 +23,7 @@ const GenericTable = ({ data, columns, actions }) => {
               <TableCell key={column.key}>{column.label}</TableCell>
             ))}
             {/* Actions column header */}
-            <TableCell>Actions</TableCell>
+            {actions && <TableCell>Actions</TableCell>}
           </TableRow>
         </TableHead>
         <TableBody>
@@ -36,25 +36,27 @@ const GenericTable = ({ data, columns, actions }) => {
                   <TableCell key={column.key}>{row[column.key]}</TableCell>
                 ))}
                 {/* Actions column */}
-                <TableCell className="actions-cell">
-                  {actions.map((action, index) => (
-                    <Button
-                      key={index}
-                      className="action-button"
-                      variant="contained"
-                      onClick={() => action.handler(row.id)}
-                    >
-                      {action.label}
-                    </Button>
-                  ))}
-                </TableCell>
+                {actions && (
+                  <TableCell className="actions-cell">
+                    {actions.map((action, index) => (
+                      <Button
+                        key={index}
+                        className="action-button"
+                        variant="contained"
+                        onClick={() => action.handler(row.id)}
+                      >
+                        {action.label}
+                      </Button>
+                    ))}
+                  </TableCell>
+                )}
               </TableRow>
             ))
           ) : (
             // If no data is available
             <TableRow>
               <TableCell
-                colSpan={columns.length + 1}
+                colSpan={columns.length + (actions ? 1 : 0)}
                 align="center"
                 className="no-data-cell"
               >

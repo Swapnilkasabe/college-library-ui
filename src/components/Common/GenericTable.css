@@ -1,4 +1,4 @@
-@import url("./common.css");
+@import url("../../App.css");
 
 .generic-table-container {
     margin: var(--margin) 0.2em;
@@ -15,6 +15,12 @@
   
   .table-container th {
     font-weight: bold;
+    font-size: 15px;
+    
+  }
+
+  .table-container td {
+    font-size: 15px;
   }
   
   .button-container > button {
