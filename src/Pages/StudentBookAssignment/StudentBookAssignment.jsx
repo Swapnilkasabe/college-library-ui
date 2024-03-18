@@ -3,23 +3,23 @@ import { MenuItem, FormControl, Select, Typography, Box } from "@mui/material";
 import GenericTable from "../../components/Common/GenericTable";
 import "./BookLending.css";
 
+const initialStudents = [
+  { id: 1, name: "John Doe", email: "test", phone: "11" },
+  { id: 2, name: "Jane Smith", email: "test2", phone: "12" },
+  { id: 3, name: "Alex Johnson", email: "test3", phone: "13" },
+];
+
+const initialBooks = [
+  {
+    id: 1,
+    name: "Book1",
+    bookID: "B001",
+    author: "Author1",
+    description: "Description1",
+  },
+];
+
 const StudentBookAssignment = () => {
-  const initialStudents = [
-    { id: 1, name: "John Doe", email: "test", phone: "11" },
-    { id: 2, name: "Jane Smith", email: "test2", phone: "12" },
-    { id: 3, name: "Alex Johnson", email: "test3", phone: "13" },
-  ];
-
-  const initialBooks = [
-    {
-      id: 1,
-      name: "Book1",
-      bookID: "B001",
-      author: "Author1",
-      description: "Description1",
-    },
-  ];
-
   // State for storing student data
   const [students, setStudents] = useState(initialStudents);
   // State for storing book data
@@ -27,7 +27,7 @@ const StudentBookAssignment = () => {
   // State for managing selected student
   const [selectedStudent, setSelectedStudent] = useState(null);
 
-  //Function to handle onChange event
+  // Function to handle onChange event
   const handleStudentChange = (e) => {
     const selectedId = parseInt(e.target.value);
     const selectedStudent = students.find(
@@ -75,15 +75,17 @@ const StudentBookAssignment = () => {
             <MenuItem value="" disabled className="select-student-option">
               Select Student
             </MenuItem>
-            {students.map((student) => (
-              <MenuItem
-                key={student.id}
-                value={student.id}
-                className="dropdown-item"
-              >
-                {student.name}
-              </MenuItem>
-            ))}
+            {students
+              ? students.map((student) => (
+                  <MenuItem
+                    key={student.id}
+                    value={student.id}
+                    className="dropdown-item"
+                  >
+                    {student.name}
+                  </MenuItem>
+                ))
+              : null}
           </Select>
         </FormControl>
       </Box>

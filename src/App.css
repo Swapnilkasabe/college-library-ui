@@ -27,32 +27,32 @@ html {
 /* Fonts */
 :root {
   --font-family: "Roboto", sans-serif;
-  --font-size-xs: 4px;
-  --font-size-sm: 8px;
-  --font-size-md: 16px;
-  --font-size-lg: 24px;
+  --font-size-xs: .25rem;
+  --font-size-sm: .5rem;
+  --font-size-md: 1rem;
+  --font-size-lg: 1.5rem;
 }
 
 /* Spacing */
 :root {
-  --spacing-xs: 4px;
-  --spacing-sm: 8px;
-  --spacing-md: 16px;
-  --spacing-lg: 24px;
-  --spacing-xl: 32px;
+  --spacing-xs: .25rem;
+  --spacing-sm: .5rem;
+  --spacing-md: 1rem;
+  --spacing-lg: 1.5rem;
+  --spacing-xl: 2rem;
 }
 
 /* Typography */
 :root {
-  --heading-font-size: 24px;
-  --body-font-size: 16px;
+  --heading-font-size: 2rem;
+  --body-font-size: 1rem;
 }
 
 /* Misc */
 :root {
   --margin: 0.625rem;
   --padding: 0.2rem;
-  --button-padding: 2px;
+  --button-padding: .125rem;
   --table-padding: 0.625rem;
   --button-font-size: 0.9375rem;
   --modal-padding: 1.25rem;
