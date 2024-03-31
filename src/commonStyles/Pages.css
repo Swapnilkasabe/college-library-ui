@@ -1,0 +1,74 @@
+@import url("../App.css");
+
+/* Student & Book Page Styles */
+
+.form-container {
+  margin: var(--spacing-xs);
+  padding: var(--spacing-xs);
+  width: 100%;
+  max-width: 56.25rem;
+  margin-bottom: var(--spacing-md);
+}
+
+.form-container .heading {
+  font-size: var(--font-size-lg);
+  font-weight: bold;
+  margin-bottom: var(--spacing-sm);
+}
+
+.form-container .button-container {
+  margin-bottom: var(--spacing-xs);
+  display: flex;
+  justify-content: flex-end;
+  margin-right: var(--spacing-sm);
+}
+
+.form-container .button-container > button {
+  padding: var(--spacing-xs);
+  font-size: var(--font-size-sm);
+  font-weight: bold;
+  padding: var(--spacing-xs) var(--spacing-sm);
+}
+
+.table-container .MuiButton-root.MuiButton-sizeSmall {
+  color: rgb(3, 51, 255);
+  text-transform: capitalize;
+  font-size: var(--font-size-sm);
+}
+/* Book Lending-Pages */
+
+.page-container {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  margin-top: var(--spacing-xs);
+  padding-left: var(--spacing-md);
+}
+
+.page-container .heading {
+  font-size: var(--spacing-lg);
+  font-weight: bold;
+  margin-bottom: var(--spacing-sm);
+}
+
+.page-form-container {
+  margin-top: var(--spacing-xs);
+  padding-left: var(--spacing-sm);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.dropdown-select {
+  width: calc(var(--spacing-xl) * 6);
+  background-color: rgba(255, 255, 255, 0.872);
+}
+
+.dropdown-item {
+  font-size: var(--spacing-md) !important;
+}
+
+.table-container .table-heading {
+  font-size: var(--font-size-sm);
+  font-weight: bold;
+}

@@ -1,6 +1,7 @@
 @import url("../../App.css");
 
-.student-page-container {
+.student-page-container,
+.book-page-container {
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -16,6 +17,7 @@
   align-items: center;
 }
 
+.select-book-text,
 .select-student-text {
   margin-right: var(--spacing-sm);
 }
@@ -24,7 +26,7 @@
   width: var(--form-element-width);
   height: var(--form-element-height);
   margin-left: var(--spacing-sm);
-}
+} 
 .dropdown-item {
   font-size: var(--font-size-md) !important;
 }
@@ -47,11 +49,7 @@
   z-index: 1;
 }
 
-.student-table-container table thead th {
-  padding: var(--spacing-xs);
-  color: var(--table-header-text-color);
-}
-
+.student-table-container table thead th,
 .book-table-container table thead th {
   padding: var(--spacing-xs);
   color: var(--table-header-text-color);

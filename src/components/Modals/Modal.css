@@ -1,27 +1,98 @@
 @import url("../../App.css");
 
 .modal-content {
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
-  background-color: white;
-  padding: var(--modal-padding); 
-  border-radius: var(--button-padding); 
-  box-shadow: 0 .25rem .5rem rgba(0, 0, 0, 0.1);
+  background-color: #fff;
+  border-radius: var(--spacing-sm);
+  padding: var(--spacing-lg);
+  width: 80%;
+  max-width: calc(var(--spacing-xl)*12);
+  margin: 20vh auto;
+  box-shadow: 0 var(--spacing-xs) var(--spacing-sm) rgba(0, 0, 0, 0.1);
 }
 
-.modal-form {
-  margin-top: var(--modal-margin-top); 
+.modal-header{
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: var(--spacing-lg);
+
 }
 
-.modal-buttons {
-  margin-top: var(--modal-button-margin-top); 
+.modal-buttons{
   display: flex;
   justify-content: flex-end;
-  
+  gap: var(--spacing-lg);
+  margin-top: var(--spacing-lg);
 }
 
-.modal-buttons > button {
-  margin-left: var(--modal-button-margin-left); 
+.modal-content .input-field {
+  width: 100%;
+  margin-bottom: var(--spacing-sm);
+  padding: .0625rem;
+  font-size: var(--font-size-xs);
+}
+
+.modal-content .input-field:focus{
+  outline: none;
+  box-shadow: 0 0 0 0.1rem rgba(0, 123, 255, 0.25);
+
+}
+
+.book-info {
+  display: flex;
+  align-items: center;
+}
+
+.book-icon {
+  margin: var(--spacing-sm) var(--spacing-md); 
+  color: dimgrey;
+}
+.modal-buttons > button:first-child {
+  padding: var(--spacing-xs) var(--spacing-sm);
+  font-size: var(--font-size-sm);
+  border: none;
+  border-radius: --spacing-xs;
+  background-color: transparent;
+  color: rgb(76, 175, 80);
+}
+
+.modal-buttons > button:first-child:hover {
+  background-color: rgb(76, 175, 80);
+  color: white;
+  border: .0313rem solid rgb(76, 175, 80);
+}
+
+.modal-buttons > button:nth-child(2) {
+  padding: var(--spacing-xs) var(--spacing-sm);
+  font-size: var(--font-size-sm);
+  border: none;
+  border-radius: var(--spacing-xs);
+  background-color: transparent;
+  color: rgb(76, 175, 80);
+}
+
+.modal-buttons > button:nth-child(2):hover {
+  background-color: rgb(76, 175, 80);
+  color: white;
+  border: .0313rem solid rgb(76, 175, 80);
+}
+
+.modal-buttons > button:last-child {
+  padding: var(--spacing-xs) var(--spacing-sm);
+  font-size: var(--font-size-sm);
+  border: none;
+  border-radius: var(--spacing-xs);
+  cursor: pointer;
+  background-color: transparent;
+  color:rgb(234, 68, 74);
+}
+
+.modal-buttons > button:last-child:hover {
+  background-color: rgb(234, 68, 74);
+  color: white;
+  border: .0313rem solid rgb(234, 68, 74);
+}
+
+.modal-header .close-icon {
+  padding: 0;
 }
