@@ -4,8 +4,12 @@ import {AppContext} from './app.context'
 // Provider component for the AppContext
 const AppContextProvider = ({ children }) => {
   const [active, setActive] = useState("students");
-  const [sidebarOpen, setSidebarOpen] = useState(false);
+  const [sidebarOpen, setSidebarOpen] = useState(true);
   const [isLogin, setIsLogin] = useState(false);
+  const [students, setStudents] = useState([]);
+  const [books, setBooks] = useState([]);
+
+
 
 // Storing the state variables in an object to be passed as context values
   const contextValues = {
@@ -15,6 +19,10 @@ const AppContextProvider = ({ children }) => {
     setSidebarOpen,
     isLogin,
     setIsLogin,
+    students,
+    setStudents,
+    books,
+    setBooks
   };
 
 // Providing the context values to its children components
