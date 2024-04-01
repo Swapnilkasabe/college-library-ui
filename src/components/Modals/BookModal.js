@@ -1,6 +1,8 @@
 import React, { useState, useEffect } from "react";
-import { Modal, Button, TextField } from "@mui/material";
+import { Modal, Button, TextField, Box, IconButton } from "@mui/material";
 import { isEmptyString } from "../../utilities/helper";
+import CloseIcon from "@mui/icons-material/Close";
+
 import "./Modal.css";
 
 export const DefaultData = {
@@ -48,30 +50,50 @@ const AddBookModal = ({ isOpen, onClose, onAdd, initialBookData }) => {
   }
   return (
     <Modal open={isOpen} onClose={onCloseHandle}>
-      <div className="modal-content">
-        <h2> {modeTitle} Book Details</h2>
+      <Box className="modal-content">
+        <Box className="modal-header">
+          <h2>{modeTitle} Book</h2>
+          <IconButton onClick={onCloseHandle} className="close-icon">
+            <CloseIcon />
+          </IconButton>
+        </Box>
         <form className="modal-form">
-          <TextField
-            label="Title"
-            value={bookData.title}
-            onChange={handleOnChange("title")}
-          />
-          <TextField
-            label="Author"
-            value={bookData.author}
-            onChange={handleOnChange("author")}
-          />
-          <TextField
-            label="Description"
-            value={bookData.description}
-            onChange={handleOnChange("description")}
-          />
-          <TextField
-            label="ID"
-            value={bookData.id}
-            onChange={handleOnChange("id")}
-          />
-
+          <Box>
+            <TextField
+              label="Title"
+              value={bookData.title}
+              onChange={handleOnChange("title")}
+              className="input-field"
+              fullWidth
+            />
+          </Box>
+          <Box>
+            <TextField
+              label="Author"
+              value={bookData.author}
+              onChange={handleOnChange("author")}
+              className="input-field"
+              fullWidth
+            />
+          </Box>
+          <Box>
+            <TextField
+              label="Description"
+              value={bookData.description}
+              onChange={handleOnChange("description")}
+              className="input-field"
+              fullWidth
+            />
+          </Box>
+          <Box>
+            <TextField
+              label="ID"
+              value={bookData.id}
+              onChange={handleOnChange("id")}
+              className="input-field"
+              fullWidth
+            />
+          </Box>
           <div className="modal-buttons">
             <Button variant="contained" color="primary" onClick={handleAdd}>
               {modeTitle} Book
@@ -81,7 +103,7 @@ const AddBookModal = ({ isOpen, onClose, onAdd, initialBookData }) => {
             </Button>
           </div>
         </form>
-      </div>
+      </Box>
     </Modal>
   );
 };

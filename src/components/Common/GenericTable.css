@@ -1,26 +1,27 @@
 @import url("../../App.css");
 
 .generic-table-container {
-    margin: var(--margin) 0.2em;
-    padding: var(--padding);
-    width: 100%;
-    max-width: 56.25rem;
+  margin: var(--spacing-sm) var(--spacing-xs);
+  padding: var(--spacing-xs);
+  width: 100%;
+  max-width: 56.25rem;
   }
-  
-  .button-container {
-    margin-bottom: var(--margin);
-    display: flex;
-    justify-content: flex-end;
-  }
-  
+
   .table-container th {
+    background-color: var(--table-header-bg);
+    color: var(--table-header-text-color);
+    text-align: center; 
+    font-size: var(--font-size-sm)!important;
     font-weight: bold;
-    font-size: 15px;
+    border-right: .0063rem solid white ;
+    padding: var(--spacing-xs); 
     
   }
 
   .table-container td {
-    font-size: 15px;
+    text-align: center; 
+    padding: var(--spacing-sm);
+    font-size: var(--font-size-sm);
   }
   
   .button-container > button {
@@ -32,30 +33,37 @@
   .table-container {
     margin: auto;
     width: 100%;
-    min-width: 37.5rem;
+    min-width: calc(var(--spacing-xl)*19);
   }
   
   .actions-cell > .action-button {
-    margin-right: 0.5rem;
+    margin-right: --spacing-xs;
     font-size: var(--button-font-size);
-    text-transform: none;
+    margin-right: var(--spacing-sm);
   }
   
   .actions-cell > .action-button:first-child {
     background-color: var(--primary-button-bg);
     color: var(--primary-button-text-color);
-    font-size: medium;
-    padding: var(--button-padding);
+    font-size: small;
+    padding: var(--spacing-xs);
+    color: var(--primary-button-bg);
+    background: transparent;
   }
   
   .actions-cell > .action-button:last-child {
     background-color: var(--secondary-button-bg);
     color: var(--primary-button-text-color);
-    font-size: medium;
-    padding: var(--button-padding);
+    font-size: small;
+    padding: var(--spacing-xs);
+    color: var(--secondary-button-bg);
+    background: transparent;
+
   }
   
   .no-data-cell {
     align-items: center;
     text-align: center;
+    padding: var(--spacing-sm);
+    font-size: var(--font-size-sm);
 }

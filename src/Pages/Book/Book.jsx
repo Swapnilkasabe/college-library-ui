@@ -1,36 +1,37 @@
 import React, { useState } from "react";
+import { Box, Grid, Typography, Button } from "@mui/material";
 import BookModal, { DefaultData } from "../../components/Modals/BookModal";
 import GenericTable from "../../components/Common/GenericTable";
-import { Button } from "@mui/material";
 import { isEmptyString } from "../../utilities/helper";
-import "./Book.css";
-
+import {
+  AddIconButton,
+  DeleteIconButton,
+  EditIconButton,
+} from "../../components/Icons/Icons";
+import { useAppContext } from "../../contexts/AppContext.Provider";
 
 const Book = () => {
   // State for storing book data
-  const [books, setBooks] = useState([]);
+  const { books, setBooks } = useAppContext();
 
   // State for managing the currently edited book
   const [editingBook, setEditingBook] = useState(DefaultData);
 
   // State for controlling the visibility of the add modal
-  const [isAddModalOpen, setIsAddModalOpen] = useState(false);
+  const [isModalOpen, setIsModalOpen] = useState(false);
 
-  // Function to open the add book modal
-  const openAddModal = () => {
-    setIsAddModalOpen(true);
-  };
 
   // Function to open the edit book modal
-  const openEditModal = (book) => {
-    setIsAddModalOpen(true);
+  const openAddAndEditModal = (book) => {
+    setIsModalOpen(true);
     if (book) {
       setEditingBook({ ...book });
     }
   };
+
   // Function to close the add book modal
-  const handleCloseAddModal = () => {
-    setIsAddModalOpen(false);
+  const closeAddAndEditModal = () => {
+    setIsModalOpen(false);
     setEditingBook(DefaultData);
   };
 
@@ -41,7 +42,7 @@ const Book = () => {
     } else {
       setBooks([...books, newBook]);
     }
-    setIsAddModalOpen(false);
+    setIsModalOpen(false);
   };
 
   // Function to update a book details
@@ -67,29 +68,44 @@ const Book = () => {
 
   // Define table actions
   const actions = [
-    { label: "Edit", handler: openEditModal },
-    { label: "Delete", handler: handleDeleteBook },
+    { label: "EDIT", handler: openAddAndEditModal, icon: <EditIconButton /> },
+    { label: "DEL", handler: handleDeleteBook, icon: <DeleteIconButton /> },
   ];
 
   return (
-    <div className="form-container">
-      <h2>Book Details</h2>
-      <div className="button-container">
-        <Button onClick={openAddModal} variant="contained" color="primary">
-          Add Book
-        </Button>
-      </div>
-      {/* Display table of books */}
-      <GenericTable data={books} columns={columns} actions={actions} />
+    <Grid
+    container
+    justifyContent="center"
+    alignItems="center"
+    className="form-container"
+  >
+    <Typography variant="h5" className="heading">Book Page</Typography>
+
+    <Grid>
+
+      <Box className="button-container">
+        <Button
+              variant="outlined"
+              startIcon={<AddIconButton />}
+              onClick={openAddAndEditModal}
+            >
+               ADD
+          </Button>
+        </Box>
+
+        <Box className="table-container">
+          <GenericTable data={books} columns={columns} actions={actions} />
+          </Box>
+      </Grid>
       <BookModal
-        isOpen={isAddModalOpen}
-        onClose={handleCloseAddModal}
+        isOpen={isModalOpen}
+        onClose={closeAddAndEditModal}
         onAdd={handleAddBook(!isEmptyString(editingBook.id))}
         initialBookData={
           isEmptyString(editingBook.id) ? DefaultData : editingBook
         }
       />
-    </div>
+    </Grid>
   );
 };
 

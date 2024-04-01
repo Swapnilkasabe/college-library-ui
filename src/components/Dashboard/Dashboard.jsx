@@ -1,7 +1,8 @@
 import React from "react";
-import Sidebar from '../Siderbar/Sidebar';
+import Sidebar from '../Sidebar/Sidebar.jsx';
 import {useAppContext} from '../../contexts/AppContext.Provider'
 import "./Dashboard.css";
+import { Grid } from "@mui/material";
 
 // Dashboard component renders the main layout of the application, including the sidebar navigation and content display
 const Dashboard = ({children}) => {
@@ -10,8 +11,8 @@ const Dashboard = ({children}) => {
 
 
   return (
-    <div className="dashboard">
-      <div className="dashboard-card">
+    <Grid container  className="dashboard">
+      <Grid item className="dashboard-card">
         {/* Sidebar component for navigation  */}
         <Sidebar
           active={active}
@@ -20,11 +21,11 @@ const Dashboard = ({children}) => {
           setSidebarOpen={setSidebarOpen}
         />
         {/* Content area for rendering different components based on the active sidebar item */}
-        <div >
+        <Grid item >
          {children}
-        </div>
-      </div>
-    </div>
+        </Grid>
+      </Grid>
+    </Grid>
   );
 };
 

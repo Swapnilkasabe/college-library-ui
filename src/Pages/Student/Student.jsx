@@ -1,36 +1,40 @@
-import React, { useState } from "react";
-import { Button } from "@mui/material";
-import StudentModal, {DefaultData} from "../../components/Modals/StudentModal";
+import React, {useState } from "react";
+import { Box, Grid, Typography, Button } from "@mui/material";
+import StudentModal, {
+  DefaultData,
+} from "../../components/Modals/StudentModal";
 import GenericTable from "../../components/Common/GenericTable";
 import { isEmptyString } from "../../utilities/helper";
-import "./Student.css";
+import { useAppContext } from "../../contexts/AppContext.Provider";
+import {
+  AddIconButton,
+  DeleteIconButton,
+  EditIconButton,
+} from "../../components/Icons/Icons";
+
+import "../../commonStyles/Pages.css";
 
 const Student = () => {
   // State for storing student data
-  const [students, setStudents] = useState([]);
+  const { students, setStudents } = useAppContext();
 
   // State for managing the currently edited student
   const [editingStudent, setEditingStudent] = useState(DefaultData);
 
   // State for controlling the visibility of the add modal
-  const [isAddModalOpen, setIsAddModalOpen] = useState(false);
+  const [isModalOpen, setIsModalOpen] = useState(false);
 
-  // Function to open the add student modal
-  const openAddModal = () => {
-    setIsAddModalOpen(true);
-  };
-
-  // Function to open the edit student modal
-  const openEditModal = (student) => {
-    setIsAddModalOpen(true);
+  // Function to open the openAddAndEditModal
+  const openAddAndEditModal = (student) => {
+    setIsModalOpen(true);
     if (student) {
       setEditingStudent({ ...student });
     }
   };
 
   // Function to close the add student modal
-  const handleCloseAddModal = () => {
-    setIsAddModalOpen(false);
+  const closeAddAndEditModal = () => {
+    setIsModalOpen(false);
     setEditingStudent(DefaultData);
   };
 
@@ -42,7 +46,7 @@ const Student = () => {
       setStudents([...students, newStudent]);
     }
 
-    setIsAddModalOpen(false);
+    setIsModalOpen(false);
   };
 
   // Function to update a student details
@@ -62,35 +66,54 @@ const Student = () => {
   const columns = [
     { key: "name", label: "Name" },
     { key: "id", label: "ID" },
-    { key: "email", label: "Email ID" },
-    { key: "phone", label: "Phone Number" },
+    { key: "email", label: "Email" },
+    { key: "phone", label: "Phone" },
   ];
 
-  // Define table actions
+  // Define table actions with custom icons
   const actions = [
-    { label: "Edit", handler: openEditModal },
-    { label: "Delete", handler: handleDeleteStudent },
+    { handler: openAddAndEditModal, icon: <EditIconButton /> },
+    {
+      handler: handleDeleteStudent,
+      icon: <DeleteIconButton />,
+    },
   ];
 
   return (
-    <div className="form-container">
-      <h2>Student Details</h2>
-      <div className="button-container">
-        <Button onClick={openAddModal} variant="contained" color="primary">
-          Add Student
-        </Button>
-      </div>
-      {/* Display table of students */}
-      <GenericTable data={students} columns={columns} actions={actions} />
+    <Grid
+      container
+      justifyContent="center"
+      alignItems="center"
+      className="form-container"
+    >
+      <Typography variant="h5" className="heading">
+        Student Page
+      </Typography>
+
+      <Grid>
+        <Box className="button-container">
+          <Button
+            variant="outlined"
+            startIcon={<AddIconButton />}
+            onClick={openAddAndEditModal}
+          >
+            ADD
+          </Button>
+        </Box>
+
+        <Box className="table-container">
+          <GenericTable data={students} columns={columns} actions={actions} />
+        </Box>
+      </Grid>
       <StudentModal
-        isOpen={isAddModalOpen}
-        onClose={handleCloseAddModal}
+        isOpen={isModalOpen}
+        onClose={closeAddAndEditModal}
         onAdd={handleAddStudent(!isEmptyString(editingStudent.id))}
         initialStudentData={
           isEmptyString(editingStudent.id) ? DefaultData : editingStudent
         }
-      />
-    </div>
+      /> 
+    </Grid>
   );
 };
 

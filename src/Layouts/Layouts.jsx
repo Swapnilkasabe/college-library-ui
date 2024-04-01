@@ -2,7 +2,6 @@ import React from 'react';
 import Grid from '@mui/material/Grid';
 import Header from '../components/Header/Header';
 import Dashboard from '../components/Dashboard/Dashboard'; 
-import './Layouts.css';
 import { useAppContext } from "../contexts/AppContext.Provider";
 
 const AppLayout = ({ children }) => {
@@ -15,8 +14,8 @@ const AppLayout = ({ children }) => {
           <Grid item>
             <Header />
           </Grid>
-          <Grid item container className="dashboard-container">
-            <Grid item xs={3}>
+          <Grid container item className="dashboard-container">
+            <Grid item>
               <Dashboard>
                 {children}
               </Dashboard>
