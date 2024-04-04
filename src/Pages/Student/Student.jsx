@@ -72,7 +72,7 @@ const Student = () => {
 
   // Define table actions with custom icons
   const actions = [
-    { handler: openAddAndEditModal, icon: <EditIconButton /> },
+    { handler: openAddAndEditModal, icon: <EditIconButton/> },
     {
       handler: handleDeleteStudent,
       icon: <DeleteIconButton />,

@@ -5,13 +5,13 @@ import {
   Select,
   Typography,
   Box,
-  Button,
-} from "@mui/material";
+  } from "@mui/material";
 import GenericTable from "../../components/Common/GenericTable";
 import BookLendingModal from "../../components/Modals/BookLendingModal";
 import { useAppContext } from "../../contexts/AppContext.Provider";
 import "../../commonStyles/Pages.css";
 import CardItem from "../../components/Common/CardItem";
+import { DeleteIconButton, EditIconButton } from "../../components/Icons/Icons";
 
 const initialBooksData = [
   {
@@ -75,20 +75,12 @@ const StudentBookAssignment = () => {
     {
       label: "Edit",
       handler: handleEdit,
-      icon: (
-        <Button variant="text" size="small">
-          Edit
-        </Button>
-      ),
+      icon: <EditIconButton/>,
     },
     {
       label: "RETURN",
       handler: handleDelete,
-      icon: (
-        <Button variant="text" size="small">
-          Return
-        </Button>
-      ),
+      icon: <DeleteIconButton/>,
     },
   ];
 
@@ -126,7 +118,7 @@ const StudentBookAssignment = () => {
             key,
             label: key.toLowerCase(),
           }))}
-          image="../../../public/Assets/user.png"
+          image="Assets/user.png"
         />
       )}{" "}
       <Box className="table-container">
