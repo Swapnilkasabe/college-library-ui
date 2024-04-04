@@ -1,79 +1,101 @@
 import React, { useState } from "react";
-import { MenuItem, FormControl, Select, Typography, Box } from "@mui/material";
+import {
+  MenuItem,
+  FormControl,
+  Select,
+  Typography,
+  Box,
+  } from "@mui/material";
 import GenericTable from "../../components/Common/GenericTable";
-import "./BookLending.css";
+import BookLendingModal from "../../components/Modals/BookLendingModal";
+import { useAppContext } from "../../contexts/AppContext.Provider";
+import "../../commonStyles/Pages.css";
+import CardItem from "../../components/Common/CardItem";
+import { DeleteIconButton, EditIconButton } from "../../components/Icons/Icons";
 
-const initialStudents = [
-  { id: 1, name: "John Doe", email: "test", phone: "11" },
-  { id: 2, name: "Jane Smith", email: "test2", phone: "12" },
-  { id: 3, name: "Alex Johnson", email: "test3", phone: "13" },
-];
-
-const initialBooks = [
+const initialBooksData = [
   {
     id: 1,
     name: "Book1",
     bookID: "B001",
     author: "Author1",
     description: "Description1",
+    Status: "issued",
   },
 ];
 
 const StudentBookAssignment = () => {
-  // State for storing student data
-  const [students, setStudents] = useState(initialStudents);
-  // State for storing book data
-  const [books, setBooks] = useState(initialBooks);
+  // Accessing students state from context
+  const { students } = useAppContext();
   // State for managing selected student
   const [selectedStudent, setSelectedStudent] = useState(null);
+  // State for managing selected book
+  const [selectedBook, setSelectedBook] = useState(null);
+  // State for managing modal visibility
+  const [openModal, setOpenModal] = useState(false);
 
-  // Function to handle onChange event
+  // Function to handle onChange event for selecting a student
   const handleStudentChange = (e) => {
-    const selectedId = parseInt(e.target.value);
+    const selectedId = e.target.value;
     const selectedStudent = students.find(
       (student) => student.id === selectedId
     );
     setSelectedStudent(selectedStudent);
   };
 
-  // Define student table columns
-  const studentColumns = [
-    { key: "name", label: "Name" },
-    { key: "id", label: "ID" },
-    { key: "email", label: "Email" },
-    { key: "phone", label: "Phone" },
-  ];
+  // Function to handle edit action
+  const handleEdit = (book) => {
+    setSelectedBook(book);
+    setOpenModal(true);
+  };
 
-  // Define book table columns
+  // Function to handle delete action
+  const handleDelete = (book) => {
+    const bookId = book.id;
+    // // const updatedBooks = initialBooks.filter(b => b.id !== bookId);
+    // console.log("Updated books after deletion:", updatedBooks);
+    // setInitialBooks(updatedBooks);
+  };
+
+  const handleClose = () => {
+    setOpenModal(false);
+  };
+
+  // Define book table actions
   const bookColumns = [
     { key: "name", label: "Name" },
     { key: "bookID", label: "ID" },
     { key: "author", label: "Author" },
     { key: "description", label: "Description" },
+    { key: "Status", label: "Status" },
   ];
 
   // Define book table actions
   const actions = [
-    { label: "Edit", handler: "" },
-    { label: "Delete", handler: "" },
+    {
+      label: "Edit",
+      handler: handleEdit,
+      icon: <EditIconButton/>,
+    },
+    {
+      label: "RETURN",
+      handler: handleDelete,
+      icon: <DeleteIconButton/>,
+    },
   ];
 
   return (
-    <Box className="student-page-container">
-      <Typography variant="h5">Student Page</Typography>
-      <Box className="student-form-container">
-        <Typography className="select-student-text">
-          Select Student:{" "}
-        </Typography>
-        <FormControl>
+    <Box className="page-container">
+      <Box className="page-form-container">
+        <FormControl sx={{ m: 1, minWidth: 120 }} size="small">
           <Select
             value={selectedStudent ? selectedStudent.id : ""}
             onChange={handleStudentChange}
             displayEmpty
             className="dropdown-select"
           >
-            <MenuItem value="" disabled className="select-student-option">
-              Select Student
+            <MenuItem value="" disabled className="select-option">
+              <em>Select Student</em>
             </MenuItem>
             {students
               ? students.map((student) => (
@@ -89,21 +111,35 @@ const StudentBookAssignment = () => {
           </Select>
         </FormControl>
       </Box>
-      <Box className="student-table-container">
-        <Typography>Student Details</Typography>
+      {selectedStudent && (
+        <CardItem
+          data={selectedStudent}
+          columns={Object.keys(selectedStudent).map((key) => ({
+            key,
+            label: key.toLowerCase(),
+          }))}
+          image="Assets/user.png"
+        />
+      )}{" "}
+      <Box className="table-container">
+        <Typography variant="h6" className="table-heading">
+          <em>Issued:-</em>
+        </Typography>
         <div className="table-content">
           <GenericTable
-            data={selectedStudent ? [selectedStudent] : []}
-            columns={studentColumns}
+            data={initialBooksData}
+            columns={bookColumns}
+            actions={actions}
           />
         </div>
       </Box>
-      <Box className="book-table-container">
-        <Typography>Book Details</Typography>
-        <div className="table-content">
-          <GenericTable data={books} columns={bookColumns} actions={actions} />
-        </div>
-      </Box>
+      {openModal && (
+        <BookLendingModal
+          isOpen={openModal}
+          book={selectedBook}
+          onClose={handleClose}
+        />
+      )}
     </Box>
   );
 };

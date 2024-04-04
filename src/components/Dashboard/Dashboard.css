@@ -3,19 +3,19 @@
   place-items: center;
   height: 100vh;
   position: relative;
+  padding-top: var(--spacing-xl);
 }
 
 .dashboard-card {
   font-family: sans-serif;
   width: 90vw;
   height: 80vh;
-  margin: 3.75rem auto;
-  margin-top: 3rem;
+  margin: 3rem auto; 
   display: flex;
   position: fixed;
-  left: 5rem;
+  left: calc(var(--spacing-md)*5);
   background-color: #fefaf5;
-  border-radius: .9375rem;
+  border-radius: var(--spacing-md);
   -webkit-box-shadow: 0px 3px 5px -1px rgba(0, 0, 0, 0.2),
     0px 6px 10px 0px rgba(0, 0, 0, 0.14), 0px 1px 18px 0px rgba(0, 0, 0, 0.12);
   box-shadow: 0px 3px 5px -1px rgba(0, 0, 0, 0.2),
@@ -24,31 +24,53 @@
 
 /* Sidebar */
 
-.dashboard-options {
+.dashboard-card .dashboard-options {
   background-color: rgb(24, 33, 62);
   color: wheat;
-  width: 13.75rem;
-  border-top-left-radius: .9375rem;
-  border-bottom-left-radius: .9375rem;
+  width:calc(var(--spacing-md)*13.75);
+  z-index: 2;
+  border-top-left-radius: var(--spacing-md);
+  border-bottom-left-radius: var(--spacing-md);
+  transition: transform 0.3s ease-in-out;
 }
 
+.dashboard-options.closed {
+  transform: translateX(-100%);
+  visibility: hidden;
+}
+
+.sidebar-toggler svg {
+  color: wheat;
+}
+
+.sidebar-toggler {
+  position: absolute;
+  top: 0%;
+  left: 0%;
+  height: var(--spacing-sm);
+  width: var(--spacing-sm);
+  z-index: 100;
+}
+
+.sidebar-content.open {
+  transform: translateX(0);
+}
 
 .dashboard-logo {
-  margin-top: 3.125rem;
-  margin-bottom: 3.125rem !important;
+  margin: calc(var(--spacing-md)*3) 0;
   color: rgb(234, 68, 74);
-  font-size: 1.875rem;
+  font-size: var(--font-size-lg);
   font-weight: 800;
   text-align: center;
 }
 
-.dashboard-option {
+.dashboard-card .dashboard-option {
   text-decoration: none;
-  padding: .0625rem;
-  border-bottom: .0313rem solid salmon;
-  border-top: .0625rem solid rgb(234, 68, 74, 0.5);
+  padding: 0.0625rem;
+  border-bottom: 0.0313rem solid salmon;
+  border-top: 0.0625rem solid rgb(234, 68, 74, 0.5);
   color: #ffff;
-  font-weight: 700;
+  font-size: var(--font-size-md);
   text-align: left;
   display: flex;
   align-items: center;
@@ -59,27 +81,20 @@
   text-decoration: none;
 }
 
-
-.dashboard-option:hover {
-  color: rgb(234, 68, 74);
-  border-left: .3125rem solid rgb(234, 68, 74);
-  transition: all 0.5s ease;
-  background-color: #ddd;
-}
-
+.dashboard-option:hover,
 .dashboard-option.clicked {
   color: rgb(234, 68, 74);
-  border-left: .3125rem solid rgb(234, 68, 74);
+  border-left: 0.3125rem solid rgb(234, 68, 74);
   transition: all 0.5s ease;
   background-color: #ddd;
 }
 
 /* Content of each option in Sidebar */
 
-
-.dashboard-option-icon {
-  margin-left: .9375rem;
-  margin-right: .9375rem;
+.dashboard-card .dashboard-option-icon {
+  margin-left: var(--spacing-md);
+  margin-right: var(--spacing-md);
+  font-size: var(--font-size-md);
 }
 
 .book-lending-submenu {
@@ -91,5 +106,5 @@
 }
 
 .book-lending-submenu p {
-  padding: .625rem;
+  padding: var(--spacing-sm);
 }

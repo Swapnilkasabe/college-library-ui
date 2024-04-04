@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from "react";
-import { Modal, Button, TextField } from "@mui/material";
+import { Modal, Button, TextField, IconButton, Box } from "@mui/material";
+import CloseIcon from "@mui/icons-material/Close";
 import { isEmptyString } from "../../utilities/helper";
 import "./Modal.css";
 
@@ -49,40 +50,60 @@ const AddStudentModal = ({ isOpen, onClose, onAdd, initialStudentData }) => {
   }
   return (
     <Modal open={isOpen} onClose={onCloseHandle}>
-      <div className="modal-content">
-        <h2>{modeTitle} Student Details</h2>
+      <Box className="modal-content">
+        <Box className="modal-header">
+          <h2>{modeTitle} Student</h2>
+          <IconButton onClick={onCloseHandle} className="close-icon">
+            <CloseIcon />
+          </IconButton>
+        </Box>
         <form className="modal-form">
-          <TextField
-            label="Name"
-            value={studentData.name}
-            onChange={handleOnChange("name")}
-          />
-          <TextField
-            label="Student ID"
-            value={studentData.id}
-            onChange={handleOnChange("id")}
-          />
-          <TextField
-            label="Email"
-            value={studentData.email}
-            onChange={handleOnChange("email")}
-          />
-          <TextField
-            label="Phone"
-            value={studentData.phone}
-            onChange={handleOnChange("phone")}
-          />
-
+          <Box>
+            <TextField
+              label="Name"
+              value={studentData.name}
+              onChange={handleOnChange("name")}
+              className="input-field"
+              fullWidth
+            />
+          </Box>
+          <Box>
+            <TextField
+              label="Student ID"
+              value={studentData.id}
+              onChange={handleOnChange("id")}
+              className="input-field"
+              fullWidth
+            />
+          </Box>
+          <Box>
+            <TextField
+              label="Email"
+              value={studentData.email}
+              onChange={handleOnChange("email")}
+              className="input-field"
+              fullWidth
+            />
+          </Box>
+          <Box>
+            <TextField
+              label="Phone"
+              value={studentData.phone}
+              onChange={handleOnChange("phone")}
+              className="input-field"
+              fullWidth
+            />
+          </Box>
           <div className="modal-buttons">
             <Button variant="contained" color="primary" onClick={handleAdd}>
               {modeTitle} Student
             </Button>
-            <Button onClick={onClose} variant="contained">
+            <Button onClick={onCloseHandle} variant="contained">
               Cancel
             </Button>
           </div>
         </form>
-      </div>
+      </Box>
     </Modal>
   );
 };

@@ -1,9 +1,10 @@
 import React, { useState } from "react";
-import { MenuItem, FormControl, Select, Typography, Box, Button } from "@mui/material";
+import { MenuItem, FormControl, Select, Typography, Box } from "@mui/material";
 import GenericTable from "../../components/Common/GenericTable";
 import BookLendingModal from "../../components/Modals/BookLendingModal";
 import { useAppContext } from "../../contexts/AppContext.Provider";
 import CardItem from "../../components/Common/CardItem";
+import { DeleteIconButton, EditIconButton } from "../../components/Icons/Icons";
 
 import "../../commonStyles/Pages.css";
 
@@ -58,20 +59,12 @@ const BookStudentAssignment = () => {
     {
       label: "Edit",
       handler: handleEdit,
-      icon: (
-        <Button variant="text" size="small">
-          Edit
-        </Button>
-      ),
+      icon: <EditIconButton/>,
     },
     {
       label: "RETURN",
       handler: handleDelete,
-      icon: (
-        <Button variant="text" size="small">
-          Return
-        </Button>
-      ),
+      icon: <DeleteIconButton/>,
     },
   ];
 
@@ -104,7 +97,7 @@ const BookStudentAssignment = () => {
             key,
             label: key.toLowerCase(),
           }))}
-          image="../../../public/Assets/book.png"
+          image="Assets/book.png"
         />
       )}
       <Box className="table-container">
