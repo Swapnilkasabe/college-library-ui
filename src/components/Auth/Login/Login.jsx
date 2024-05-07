@@ -11,17 +11,25 @@ import { useNavigate } from "react-router-dom";
 import { useAppContext } from "../../../contexts/AppContext.Provider";
 import { loginValidation } from "../../../utilities/formValidation";
 import "./Login.css";
+import { userLogin } from "../../../services/user.service";
 
 const Login = () => {
   const { setIsLogin } = useAppContext();
+  // State for form data
   const [formData, setFormData] = useState({ email: "", password: "" });
+  // State for form errors
   const [formErrors, setFormErrors] = useState({});
+  // State for login errors
+  const [loginError, setLoginError] = useState(""); 
+
   const navigate = useNavigate();
 
+   // Redirect to signup page
   const handleToggle = () => {
     navigate("/signup");
   };
 
+  // Update form data on input change
   const handleInputChange = (e) => {
     const { name, value } = e.target;
     setFormData((prevFormData) => ({
@@ -30,15 +38,29 @@ const Login = () => {
     }));
   };
 
-  const handleSubmit = (e) => {
+    // Form submission handling
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    const errors = loginValidation(formData);
+    const { errors, isError } = loginValidation(formData);
     setFormErrors(errors);
-    if (Object.keys(errors).length === 0) {
-      setIsLogin(true);
-      navigate("/");
+    if (isError) {
+      console.error("Validation error:", errors); 
+      return;
     }
-  };
+    try {
+      const response = await userLogin(formData);
+      if (response.success) {
+        setIsLogin(true);
+        navigate("/");
+      } else {
+        setLoginError(response.error || "Incorrect email or password."); 
+      }
+    } catch (error) {
+      console.error("Login failed:", error.message);
+      setLoginError("An error occurred. Please try again.");
+    }
+  }; 
+
 
   const handleFocus = (e)=>{
   const {name} = e.target;
@@ -65,6 +87,9 @@ const Login = () => {
             Login
           </Typography>
           <form className="login-form" onSubmit={handleSubmit}>
+            {loginError && (
+              <Typography color="error">{loginError}</Typography>
+            )}
             <TextField
               id="email"
               name="email"

@@ -4,10 +4,11 @@ import { useNavigate } from "react-router-dom";
 import { signupValidation } from "../../../utilities/formValidation";
 
 import "./Signup.css";
+import { userSignup } from "../../../services/user.service";
 
 const Signup = () => {
   const [formData, setFormData] = useState({
-    fullName: "",
+    username: "",
     email: "",
     password: "",
     confirmPassword: "",
@@ -17,34 +18,46 @@ const Signup = () => {
 
   const navigate = useNavigate();
 
+// Toggle between signup and login
   const handleToggle = () => {
     navigate("/login");
   };
 
-  const handleSubmit = (e) => {
+  // Handle form submission
+  const handleSubmit = async (e) => {
     e.preventDefault(); // Prevent default form submission behavior
-
-    const errors = signupValidation(formData);
-    setFormErrors(errors);
-
-    // If there are no errors, proceeding with signup
-    if (Object.keys(errors).length === 0) {
-      setRegistrationSuccess(true); 
-      
+    const {errors, isError} = signupValidation(formData);
+    setFormErrors(true);
+    if (isError) {
+      console.error("Validation error:", errors); 
+      return;
     }
-  };
+      try {
+           const response = await userSignup(formData);
+          if (response.success) { 
+            setRegistrationSuccess(true);
+          } else {
+            setFormErrors(response.error); 
+          }}
+         catch (error) {
+        console.error('Signup failed:', error.message);
+        setFormErrors("An error occurred. Please try again.");
+      }}
 
+
+  // Handle input change
   const handleInputChange = (e) => {
     const { name, value } = e.target;
     setFormData({ ...formData, [name]: value });
   };
 
+  // Handle focus event
   const handleFocus = (e)=>{
     const {name} = e.target;
     setFormErrors((prevErros)=>({...prevErros, [name]:""}))
   }
 
-
+// Handle blur event
   const handleBlur = (e)=>{
    const {name} = e.target;
    const errors = signupValidation({...formData, [name]:formData[name]})
@@ -67,19 +80,19 @@ const Signup = () => {
             // If registration is not successful, displaying the signup form
             <form className="signup-form" onSubmit={handleSubmit}>
               <TextField
-                id="fullName"
-                name="fullName"
-                label="Full Name"
+                id="username"
+                name="username"
+                label="Username"
                 variant="outlined"
                 margin="normal"
                 className="signup-field"
-                value={formData.fullName}
+                value={formData.username}
                 onChange={handleInputChange}
                 onFocus={handleFocus}
                 onBlur={handleBlur}
               />
-              {formErrors.fullName && (
-                <FormHelperText error>{formErrors.fullName}</FormHelperText>
+              {formErrors.username && (
+                <FormHelperText error>{formErrors.username}</FormHelperText>
               )}
               <TextField
                 id="email"
@@ -158,7 +171,7 @@ const Signup = () => {
                 variant="contained"
                 color="primary"
                 className="login-button"
-                onClick={handleToggle}
+                onClick={()=>setTimeout(handleToggle, 1000)}
               >
                 Login
               </Button>
