@@ -1,58 +1,72 @@
 import React, { useEffect, useState } from "react";
-import { Modal, Button, TextField, IconButton, Box } from "@mui/material";
+import {
+  Modal,
+  Button,
+  TextField,
+  IconButton,
+  Box,
+  Typography,
+} from "@mui/material";
 import CloseIcon from "@mui/icons-material/Close";
 import { isEmptyString } from "../../utilities/helper";
 import "./Modal.css";
+import { studentCreationValidation } from "../../utilities/formValidation";
 
 export const DefaultData = {
-  id: "",
+  studentId: "",
   name: "",
   email: "",
-  phone: "",
+  phoneNumber: "",
 };
 
-const AddStudentModal = ({ isOpen, onClose, onAdd, initialStudentData }) => {
-  // Initializing state variables with default values from the DefaultData object
-  const [studentData, setStudentData] = useState(DefaultData);
+const StudentModal = ({ isOpen, onClose, onAdd, initialStudentData }) => {
+  const [studentData, setStudentData] = useState(initialStudentData);
+  const [errors, setErrors] = useState({});
 
-  // Handling add function
+  // Handle add student
   const handleAdd = () => {
+    const { errors, isError } = studentCreationValidation(studentData);
+    if (isError) {
+      throw new Error("Error creating student");
+      return;
+    }
     onAdd(studentData);
     setStudentData(DefaultData);
     onClose();
   };
 
-  // Handling onchange in input fields
+  // Handle input change
   const handleOnChange = (key) => (e) => {
     e.preventDefault();
     const { value } = e.target;
     setStudentData((prevStudentData) => ({ ...prevStudentData, [key]: value }));
   };
 
-  // Handling modal close action
+  // Handle onClose change
   const onCloseHandle = () => {
     setStudentData(DefaultData);
+    setErrors({});
     onClose();
   };
 
-  // Effect to update form data when initial data changes
   useEffect(() => {
-    if (!isEmptyString(initialStudentData.id)) {
+    if (!isEmptyString(initialStudentData.studentId)) {
       setStudentData(initialStudentData);
     }
   }, [isOpen, initialStudentData]);
 
-  // Determining title whether it's an add or update operation
-  const modeTitle = isEmptyString(initialStudentData.id) ? "Add" : "Update";
+  const modeTitle = isEmptyString(initialStudentData.studentId)
+    ? "Add"
+    : "Update";
 
   if (!isOpen) {
-    return <></>; // If modal is not open, return nothing
+    return <></>;
   }
   return (
     <Modal open={isOpen} onClose={onCloseHandle}>
       <Box className="modal-content">
         <Box className="modal-header">
-          <h2>{modeTitle} Student</h2>
+          <Typography variant="h5">{modeTitle} Student</Typography>
           <IconButton onClick={onCloseHandle} className="close-icon">
             <CloseIcon />
           </IconButton>
@@ -65,15 +79,19 @@ const AddStudentModal = ({ isOpen, onClose, onAdd, initialStudentData }) => {
               onChange={handleOnChange("name")}
               className="input-field"
               fullWidth
+              error={!!errors.name}
+              helperText={errors.name}
             />
           </Box>
           <Box>
             <TextField
               label="Student ID"
-              value={studentData.id}
-              onChange={handleOnChange("id")}
+              value={studentData.studentId}
+              onChange={handleOnChange("studentId")}
               className="input-field"
               fullWidth
+              error={!!errors?.studentId}
+              helperText={errors?.studentId}
             />
           </Box>
           <Box>
@@ -83,15 +101,19 @@ const AddStudentModal = ({ isOpen, onClose, onAdd, initialStudentData }) => {
               onChange={handleOnChange("email")}
               className="input-field"
               fullWidth
+              error={!!errors.email}
+              helperText={errors.email}
             />
           </Box>
           <Box>
             <TextField
               label="Phone"
-              value={studentData.phone}
-              onChange={handleOnChange("phone")}
+              value={studentData.phoneNumber}
+              onChange={handleOnChange("phoneNumber")}
               className="input-field"
               fullWidth
+              error={!!errors.phone}
+              helperText={errors.phone}
             />
           </Box>
           <div className="modal-buttons">
@@ -108,4 +130,4 @@ const AddStudentModal = ({ isOpen, onClose, onAdd, initialStudentData }) => {
   );
 };
 
-export default AddStudentModal;
+export default StudentModal;
