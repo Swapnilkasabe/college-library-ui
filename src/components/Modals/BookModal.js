@@ -4,20 +4,26 @@ import { isEmptyString } from "../../utilities/helper";
 import CloseIcon from "@mui/icons-material/Close";
 
 import "./Modal.css";
+import { bookCreationValidation } from "../../utilities/formValidation";
 
 export const DefaultData = {
   title: "",
   author: "",
   description: "",
-  id: "",
+  bookId: "",
 };
 
 const AddBookModal = ({ isOpen, onClose, onAdd, initialBookData }) => {
   // Initializing state variables with default values from the DefaultData object
-  const [bookData, setBookData] = useState(DefaultData);
+  const [bookData, setBookData] = useState(initialBookData);
+  const [errors, setErrors] = useState({});
 
   // Handling add function
   const handleAdd = () => {
+    const { errors, isError } = bookCreationValidation(bookData);
+    if (isError) {
+      throw new Error("Error adding book");
+    }
     onAdd(bookData);
     setBookData(DefaultData);
     onClose();
@@ -38,15 +44,14 @@ const AddBookModal = ({ isOpen, onClose, onAdd, initialBookData }) => {
 
   // Effect to update form data when initial data changes
   useEffect(() => {
-    if (!isEmptyString(initialBookData.id)) {
+    if (!isEmptyString(initialBookData.bookId)) {
       setBookData(initialBookData);
     }
   }, [isOpen, initialBookData]);
 
-  // Determining title whether it's an add or update operation
-  const modeTitle = isEmptyString(initialBookData.id) ? "Add" : "Update";
+  const modeTitle = isEmptyString(initialBookData.bookId) ? "Add" : "Update";
   if (!isOpen) {
-    return <></>; // If modal is not open, return nothing
+    return <></>;
   }
   return (
     <Modal open={isOpen} onClose={onCloseHandle}>
@@ -65,6 +70,8 @@ const AddBookModal = ({ isOpen, onClose, onAdd, initialBookData }) => {
               onChange={handleOnChange("title")}
               className="input-field"
               fullWidth
+              error={!!errors.title}
+              helperText={errors.title}
             />
           </Box>
           <Box>
@@ -74,6 +81,8 @@ const AddBookModal = ({ isOpen, onClose, onAdd, initialBookData }) => {
               onChange={handleOnChange("author")}
               className="input-field"
               fullWidth
+              error={!!errors.author}
+              helperText={errors.author}
             />
           </Box>
           <Box>
@@ -83,15 +92,19 @@ const AddBookModal = ({ isOpen, onClose, onAdd, initialBookData }) => {
               onChange={handleOnChange("description")}
               className="input-field"
               fullWidth
+              error={!!errors.description}
+              helperText={errors.description}
             />
           </Box>
           <Box>
             <TextField
               label="ID"
-              value={bookData.id}
-              onChange={handleOnChange("id")}
+              value={bookData.bookId}
+              onChange={handleOnChange("bookId")}
               className="input-field"
               fullWidth
+              error={!!errors.bookId}
+              helperText={errors.bookId}
             />
           </Box>
           <div className="modal-buttons">
