@@ -9,8 +9,6 @@ export const getCall = async (url, headers) =>
 
 // Function to make a POST request
 export const postCall = async (url, headers, body) => {
-  console.warn("headers:", headers, body, JSON.stringify(body));
-
   return await apiCall(url, {
     method: "POST",
     headers,

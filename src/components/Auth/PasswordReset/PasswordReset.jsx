@@ -4,6 +4,7 @@ import { useNavigate } from "react-router-dom";
 import { passwordResetValidation } from "../../../utilities/formValidation";
 import "./PasswordReset.css";
 import { checkEmailExists, passwordReset } from "../../../services/user.service";
+import useDebounce from "../../../hooks/useDebounce";
 
 const PasswordReset = () => {
   const [email, setEmail] = useState("");
@@ -14,16 +15,28 @@ const PasswordReset = () => {
   const [passwordChanged, setPasswordChanged] = useState(false);
   const navigate = useNavigate();
 
+
+  // Debounce email change 
+  const debouncedHandleEmailChange = useDebounce((value) => {
+    setEmail(value);
+    setEmailError("");
+  }, 500);
+
+  // Debounce password change
+  const debouncedHandlePasswordChange = useDebounce((value) => {
+    setPasswords(value);
+    setPasswordError("");
+  }, 500);
+
   // Handle email input change
   const handleEmailChange = (e) => {
-    setEmail(e.target.value);
-    setEmailError("");
+    debouncedHandleEmailChange(e.target.value);
   };
 
   // Handle password input change
   const handlePasswordChange = (e) => {
-    setPasswords({ ...passwords, [e.target.name]: e.target.value });
-    setPasswordError("");
+    const { name, value } = e.target;
+    debouncedHandlePasswordChange({ ...passwords, [e.target.name]: e.target.value });
   };
 
    // Verifying email for password reset
