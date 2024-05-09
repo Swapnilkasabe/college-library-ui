@@ -1,119 +1,178 @@
 import React, { useState } from "react";
-import { TextField, Button, Paper, Grid, Typography, Box } from "@mui/material";
+import { TextField, Button, Paper, Grid, Typography } from "@mui/material";
 import { useNavigate } from "react-router-dom";
 import { passwordResetValidation } from "../../../utilities/formValidation";
 import "./PasswordReset.css";
-
-const initialValues = {newPassword: "", confirmNewPassword: ""}
+import { checkEmailExists, passwordReset } from "../../../services/user.service";
+import useDebounce from "../../../hooks/useDebounce";
 
 const PasswordReset = () => {
- const [data, setData] = useState(initialValues);
- const [dataErrors, setDataErrors] = useState({});
- const [passwordChange, setPasswordChange] = useState(false);
+  const [email, setEmail] = useState("");
+  const [emailError, setEmailError] = useState("");
+  const [emailVerified, setEmailVerified] = useState(false);
+  const [passwords, setPasswords] = useState({ newPassword: "", confirmNewPassword: "" });
+  const [passwordError, setPasswordError] = useState("");
+  const [passwordChanged, setPasswordChanged] = useState(false);
+  const navigate = useNavigate();
 
- const navigate = useNavigate();
 
- const handleInputChange = (e) => {
-  const { name, value } = e.target;
-  setData((prevData) => ({ ...prevData, [name]: value }));
-}
+  // Debounce email change 
+  const debouncedHandleEmailChange = useDebounce((value) => {
+    setEmail(value);
+    setEmailError("");
+  }, 500);
 
-const handleToggle = () => {
-  navigate("/login");
-};
+  // Debounce password change
+  const debouncedHandlePasswordChange = useDebounce((value) => {
+    setPasswords(value);
+    setPasswordError("");
+  }, 500);
 
-const handleFocus = (e)=>{
-  const {name} = e.target;
-setDataErrors((prevData)=>({...prevData, [name]:""}))
+  // Handle email input change
+  const handleEmailChange = (e) => {
+    debouncedHandleEmailChange(e.target.value);
+  };
 
-}
+  // Handle password input change
+  const handlePasswordChange = (e) => {
+    const { name, value } = e.target;
+    debouncedHandlePasswordChange({ ...passwords, [e.target.name]: e.target.value });
+  };
 
-const handleBlur = (e)=>{
-  const {name} = e.target;
-  const errors = passwordResetValidation({...data, [name]:data[name]});
-  setDataErrors((prevData)=>({...prevData, [name]:errors[name]}))
-}
+   // Verifying email for password reset
+  const verifyEmail = async () => {
+    try {
+      const response = await checkEmailExists({email});
+      if (response.success && response.emailExists) {
+        setEmailVerified(true);
+      } else {
+        if (response.error === "User not found") {
+        }
+        setEmailError("Email not found. Please enter a valid email.");
+      }
+    } catch (error) {
+      console.error("Error verifying email:", error);
+      setEmailError("An error occurred. Please try again later.");
+    }
+  };
 
-const handleSubmit = (e)=>{
-e.preventDefault();
-const errors = passwordResetValidation(data);
-setDataErrors(errors);
-if (Object.keys(errors).length===0) {
-  setPasswordChange(true);
-}
+  // Handle form submission for password reset
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    const { errors, isError } = passwordResetValidation(passwords);
+    setPasswordError("");
 
-}
+    if (isError) {
+      console.error("Validation error:", errors); 
+      return;
+    }
+    
+    try {
+      const response = await passwordReset({ email, newPassword: passwords.newPassword });
+
+      if (response.success) {
+        setPasswordChanged(true);
+      } else {
+        setPasswordError(response.error || "An error occurred. Please try again later.");
+      }
+    } catch (error) {
+      console.error("Error changing password:", error);
+      setPasswordError("An error occurred. Please try again later.");
+    }
+  }; 
 
   return (
     <Grid
       container
       justifyContent="center"
       alignItems="center"
-      className="password-reset-container">  
+      className="password-reset-container"
+    >
       <Grid item xs={12} sm={8} md={5} lg={4}>
-    
-      <Paper elevation={3} className="password-reset-paper">
-      <Typography variant="h5" className="login-title">
-         {!passwordChange ? "Reset Your Password" : "" }
-          </Typography>  
-          {!passwordChange ? (<form className="password-reset-form" onSubmit={handleSubmit}>
-          <TextField
-            name="newPassword"
-            label="New Password"
-            type="password"
-            variant="outlined"
-            margin="normal"
-            fullWidth
-            value={data.newPassword}
-            onChange={handleInputChange}
-            onFocus={handleFocus}
-            onBlur={handleBlur}
-            error={!!dataErrors.newPassword}
-            helperText={dataErrors.newPassword}
-          />
-          <TextField
-            name="confirmNewPassword"
-            label="Confirm New Password"
-            type="password"
-            variant="outlined"
-            margin="normal"
-            fullWidth
-            value={data.confirmNewPassword}
-            onChange={handleInputChange}
-            onFocus={handleFocus}
-            onBlur={handleBlur}
-            error={!!dataErrors.confirmNewPassword}
-            helperText={dataErrors.confirmNewPassword}
-          />
-          <Button
-            variant="contained"
-            color="primary"
-            className="submit-button"
-            type="submit"
-          >
-            Reset Password
-          </Button>
-        </form>) : 
-        // If passwordChange is successful, displaying a success message
-            <Box className="success-message">
-           <Typography variant="body2" gutterBottom>
-           You have successfully reset your password!
-
-              </Typography>              
-            <Typography variant="body2" gutterBottom>
-              Please log in to continue.
-            </Typography>                
-            <Button
+        <Paper elevation={3} className="password-reset-paper">
+          <Typography variant="h5" className="login-title">
+            Reset Your Password
+          </Typography>
+          {!emailVerified ? (
+            <form
+              className="password-reset-form"
+              onSubmit={(e) => {
+                e.preventDefault();
+                verifyEmail();
+              }}
+            >
+              <TextField
+                name="email"
+                label="Email"
+                type="email"
+                variant="outlined"
+                margin="normal"
+                fullWidth
+                value={email}
+                onChange={handleEmailChange}
+                error={!!emailError}
+                helperText={emailError}
+              />
+              <Button
+                variant="contained"
+                color="primary"
+                className="submit-button"
+                type="submit"
+              >
+                Verify Email
+              </Button>
+            </form>
+          ) : !passwordChanged ? (
+            <form className="password-reset-form" onSubmit={handleSubmit}>
+              <TextField
+                name="newPassword"
+                label="New Password"
+                type="password"
+                variant="outlined"
+                margin="normal"
+                fullWidth
+                value={passwords.newPassword}
+                onChange={handlePasswordChange}
+                error={!!passwordError}
+                helperText={passwordError}
+              />
+              <TextField
+                name="confirmNewPassword"
+                label="Confirm New Password"
+                type="password"
+                variant="outlined"
+                margin="normal"
+                fullWidth
+                value={passwords.confirmNewPassword}
+                onChange={handlePasswordChange}
+                error={!!passwordError}
+                helperText={passwordError}
+              />
+              <Button
+                variant="contained"
+                color="primary"
+                className="submit-button"
+                type="submit"
+              >
+                Reset Password
+              </Button>
+            </form>
+          ) : (
+            <div className="success-message">
+              <Typography variant="body2" gutterBottom>
+                Password successfully changed!
+              </Typography>
+              <Button
                 variant="contained"
                 color="primary"
                 className="login-button"
-                onClick={handleToggle}
+                onClick={() => navigate("/login")}
               >
                 Login
               </Button>
-            </Box>}      
-          
-      </Paper>
+            </div>
+          )}
+        </Paper>
       </Grid>
     </Grid>
   );
