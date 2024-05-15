@@ -6,7 +6,7 @@ import { Grid } from "@mui/material";
 
 // Dashboard component renders the main layout of the application, including the sidebar navigation and content display
 const Dashboard = ({children}) => {
-  // Accessing context values
+    // Accessing context values
   const { active, setActive, sidebarOpen, setSidebarOpen } = useAppContext();
 
 

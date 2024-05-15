@@ -8,4 +8,9 @@ export const AppContext = createContext({
   setIsLogin: (val) => {},
   setSidebarOpen: (val) => {},
   setActive: (val) => {},
+  showNotification: false,
+  notificationOptions: { message: "", severity: "info", autoClose: 5000 },
+  setShowNotification: (val) => {},
+  setNotificationOptions: (val) => {},
+  notificationHandler: (val) => {},
 });

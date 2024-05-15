@@ -5,7 +5,6 @@ import StudentModal, {
 } from "../../components/Modals/StudentModal";
 import GenericTable from "../../components/Common/GenericTable";
 import { isEmptyString } from "../../utilities/helper";
-import { useAppContext } from "../../contexts/AppContext.Provider";
 import {
   AddIconButton,
   DeleteIconButton,
@@ -14,10 +13,11 @@ import {
 import "../../commonStyles/Pages.css";
 import { studentCreationValidation, studentUpdateValidation } from "../../utilities/formValidation";
 import { createStudent, deleteStudent, getAllStudents, updateStudent } from "../../services/student.service";
+import { useAppContext } from "../../contexts/AppContext.Provider";
 
 const Student = () => {
   // State for storing student data
-  const { students, setStudents } = useAppContext();
+  const [students, setStudents] = useState([]);
 
   // State for managing the currently edited student
   const [editingStudent, setEditingStudent] = useState(DefaultData);
@@ -30,6 +30,9 @@ const Student = () => {
 
   //State for managing the delete student operation
   const [deletingStudent, setDeletingStudent] = useState(null);
+
+  // Access state from context for displaying notification
+  const { notificationHandler } = useAppContext();
 
   // Effect to fetch students on component mount
   useEffect(() => {
@@ -66,24 +69,27 @@ const handleAddStudent = async (newStudent) => {
     let response;
 
     if (newStudent?._id) {
-      const {errors, isError} = studentUpdateValidation(newStudent);
+      const {errors, isError} = studentUpdateValidation(newStudent);   
       if (isError) {
-        throw new Error("Validation error:", errors);
-        return;
-      }
+        throw new Error("Validation error: " + errors); 
+         }
       response = await handleUpdateStudent(newStudent);
     } 
     else {
       const {errors, isError} = studentCreationValidation(newStudent);
       if (isError) {
-        throw new Error("Validation error:", errors);
-        return;
-      }
+         throw new Error("Validation error: " + errors); 
+         }
       response = await createStudent(newStudent);
     }
     if (response && response.errors && response.errors.length > 0) {
       console.error("Validation errors:", response.errors);
       return;
+    }   
+    if (newStudent?._id) {
+      notificationHandler(true, "Successfully updated student", "success");
+    } else {
+      notificationHandler(true, "Successfully added student", "success");
     }
     fetchStudents();
   } catch (error) {
@@ -97,11 +103,12 @@ const handleUpdateStudent = async (updatedStudent) => {
   try {
      const {errors, isError} = studentUpdateValidation(updatedStudent);
   if (isError) {
-    throw new Error("Validation error:", errors);
-    return;
+    throw new Error("Validation error: " + errors);
+  
   }
     await updateStudent(updatedStudent.studentId, updatedStudent);
     fetchStudents();
+    notificationHandler(true, "Successfully updated student", "success");
   } catch (error) {
     console.error('Error updating student:', error);
   }
@@ -114,10 +121,12 @@ const handleUpdateStudent = async (updatedStudent) => {
     setDeleteConfirmationOpen(true);
   };
 
+   // Function for delete confirmation
   const confirmDelete = async () => {
     try {
       const res = await deleteStudent(deletingStudent.studentId);  
       fetchStudents();
+      notificationHandler(true, "Successfully deleted student", "success");
     } catch (error) {
       console.error('Error deleting student', error);
     }
@@ -167,6 +176,7 @@ const handleUpdateStudent = async (updatedStudent) => {
           <GenericTable data={students} columns={columns} actions={actions} />
         </Box>
       </Grid>
+      {/* Student modal component  */}
       <StudentModal
         isOpen={isModalOpen}
         onClose={closeAddAndEditModal}
@@ -175,6 +185,7 @@ const handleUpdateStudent = async (updatedStudent) => {
           isEmptyString(editingStudent.studentId) ? DefaultData : editingStudent
         }
       /> 
+      {/* Component for delete confirmation */}
       <Dialog open= {deleteConfirmationOpen} onClose={() => setDeleteConfirmationOpen(false)}>
       <DialogTitle>
         Delete Student

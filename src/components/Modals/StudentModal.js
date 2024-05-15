@@ -49,6 +49,8 @@ const StudentModal = ({ isOpen, onClose, onAdd, initialStudentData }) => {
     onClose();
   };
 
+  const isEditMode = !isEmptyString(initialStudentData.studentId);
+
   useEffect(() => {
     if (!isEmptyString(initialStudentData.studentId)) {
       setStudentData(initialStudentData);
@@ -92,6 +94,7 @@ const StudentModal = ({ isOpen, onClose, onAdd, initialStudentData }) => {
               fullWidth
               error={!!errors?.studentId}
               helperText={errors?.studentId}
+              disabled={isEditMode}
             />
           </Box>
           <Box>

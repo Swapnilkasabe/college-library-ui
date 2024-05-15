@@ -29,9 +29,9 @@ const GenericTable = ({ data, columns, actions }) => {
             </TableRow>
           </TableHead>
           <TableBody>
-            {data.length > 0 ? (
+            {data?.length > 0 ? (
               // Mapping over data to render table rows
-              data.map((row) => (
+              data?.map((row) => (
                 <TableRow key={row.id || row.code}>
                   {/* Mapping over columns to render table cells */}
                   {columns.map((column) => (

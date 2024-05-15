@@ -11,11 +11,11 @@ import {
 import { useAppContext } from "../../contexts/AppContext.Provider";
 import { createBook, deleteBook, getAllBooks, updateBook } from "../../services/book.service";
 import { bookUpdateValidation, bookCreationValidation } from "../../utilities/formValidation";
-import BookIssuanceModal from "../../components/Modals/BookIssuanceModal";
+import CustomSnackbar from "../../utilities/CustomSnackbar";
 
 const Book = () => {
   // State for storing book data
-  const { books, setBooks } = useAppContext();
+  const [books, setBooks ] = useState([]);
 
   // State for managing the currently edited book
   const [editingBook, setEditingBook] = useState(DefaultData);
@@ -28,6 +28,10 @@ const Book = () => {
 
   //State for managing the delete book operation
   const [deletingBook, setDeletingBook] = useState(null);
+
+  // Access state from context for displaying notification
+  const { notificationHandler } = useAppContext();
+
 
   // Effect to fetch books on component mount
   useEffect(() => {
@@ -79,6 +83,11 @@ const Book = () => {
         console.error("Validation errors:", response.errors);
         return;
       }
+      if (newBook?._id) {
+        notificationHandler(true, "Successfully updated book", "success");
+      } else {
+        notificationHandler(true, "Successfully added book", "success");
+      }
       await fetchBooks();
     }
      catch (error) {
@@ -110,10 +119,13 @@ const Book = () => {
     setDeleteConfirmationOpen(true);
   };
 
+  // Function for delete confirmation
   const confirmDelete = async () => {
     try {
       const res = await deleteBook(deletingBook);  
       fetchBooks();
+      notificationHandler(true, "Successfully deleted book", "success");
+
     } catch (error) {
       console.error('Error deleting book', error);
     }
@@ -159,6 +171,7 @@ const Book = () => {
           <GenericTable data={books} columns={columns} actions={actions} />
           </Box>
       </Grid>
+      {/* Book modal component  */}
       <BookModal
         isOpen={isModalOpen}
         onClose={closeAddAndEditModal}
@@ -167,6 +180,7 @@ const Book = () => {
           isEmptyString(editingBook.bookId) ? DefaultData : editingBook
         }
       />
+      {/* Component for delete confirmation */}
       <Dialog open={deleteConfirmationOpen} onClose={() => setDeleteConfirmationOpen(false)}>
   <DialogTitle>Delete Book</DialogTitle>
   <DialogContent>
