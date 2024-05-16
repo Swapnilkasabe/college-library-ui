@@ -6,7 +6,7 @@ import { postCall } from "./Service";
 export const userLogin = async (loginData) => {
   const response = await postCall(
     `${APIURL}/users/login`,
-    getToken(),
+    getToken(false),
     loginData
   );
   return response;
@@ -15,7 +15,7 @@ export const userLogin = async (loginData) => {
 export const userSignup = async (signupData) => {
   const response = await postCall(
     `${APIURL}/users/signup`,
-    getToken(),
+    getToken(false),
     signupData
   );
   return response;
@@ -25,7 +25,7 @@ export const userSignup = async (signupData) => {
 export const checkEmailExists = async (checkEmailData) => {
   const response = await postCall(
     `${APIURL}/users/check-email`,
-    getToken(),
+    getToken(false),
     checkEmailData
   );
   return response;
@@ -35,7 +35,7 @@ export const checkEmailExists = async (checkEmailData) => {
 export const passwordReset = async (passwordResetData) => {
   const response = await postCall(
     `${APIURL}/users/reset-password`,
-    getToken(),
+    getToken(false),
     passwordResetData
   );
   return response;

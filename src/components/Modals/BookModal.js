@@ -42,6 +42,8 @@ const AddBookModal = ({ isOpen, onClose, onAdd, initialBookData }) => {
     onClose();
   };
 
+  const isEditMode = !isEmptyString(initialBookData.bookId);
+
   // Effect to update form data when initial data changes
   useEffect(() => {
     if (!isEmptyString(initialBookData.bookId)) {
@@ -105,6 +107,7 @@ const AddBookModal = ({ isOpen, onClose, onAdd, initialBookData }) => {
               fullWidth
               error={!!errors.bookId}
               helperText={errors.bookId}
+              disabled={isEditMode}
             />
           </Box>
           <div className="modal-buttons">

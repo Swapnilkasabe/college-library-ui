@@ -19,10 +19,14 @@ const PrivateRoute = () => {
 
 // AppRoutes component defines all routes of the application
 const AppRoutes = () => {
+  const { isLogin } = useAppContext();
   return (
     <Routes>
       <Route path="/signup" element={<Signup />} />
-      <Route path="/login" element={<Login />} />
+      <Route
+        path="/login"
+        element={!isLogin ? <Login /> : <Navigate to="/" replace />}
+      />
       <Route path="/reset/:token" element={<PasswordReset />} />
 
       <Route element={<PrivateRoute />}>

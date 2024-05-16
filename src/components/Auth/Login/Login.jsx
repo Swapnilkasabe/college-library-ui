@@ -12,6 +12,7 @@ import { useAppContext } from "../../../contexts/AppContext.Provider";
 import { loginValidation } from "../../../utilities/formValidation";
 import "./Login.css";
 import { userLogin } from "../../../services/user.service";
+import localStorageService from "../../../services/localStorageService";
 
 const Login = () => {
   const { setIsLogin } = useAppContext();
@@ -21,6 +22,8 @@ const Login = () => {
   const [formErrors, setFormErrors] = useState({});
   // State for login errors
   const [loginError, setLoginError] = useState(""); 
+  // Access state from context for displaying notification
+  const { notificationHandler } = useAppContext();
 
   const navigate = useNavigate();
 
@@ -50,8 +53,10 @@ const Login = () => {
     try {
       const response = await userLogin(formData);
       if (response.success) {
+        localStorageService.set('token', response.token);
         setIsLogin(true);
-        navigate("/");
+        notificationHandler(true, "Logged in successfully", "success");
+        navigate("/", {replace: true} );
       } else {
         setLoginError(response.error || "Incorrect email or password."); 
       }
@@ -140,7 +145,7 @@ const Login = () => {
             </Typography>
           </form>
         </Paper>
-      </Grid>
+      </Grid>  
     </Grid>
   );
 };

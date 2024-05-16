@@ -5,6 +5,7 @@ import { passwordResetValidation } from "../../../utilities/formValidation";
 import "./PasswordReset.css";
 import { checkEmailExists, passwordReset } from "../../../services/user.service";
 import useDebounce from "../../../hooks/useDebounce";
+import localStorageService from "../../../services/localStorageService";
 
 const PasswordReset = () => {
   const [email, setEmail] = useState("");
@@ -69,8 +70,8 @@ const PasswordReset = () => {
     
     try {
       const response = await passwordReset({ email, newPassword: passwords.newPassword });
-
       if (response.success) {
+        localStorageService.set('token', response.token);
         setPasswordChanged(true);
       } else {
         setPasswordError(response.error || "An error occurred. Please try again later.");

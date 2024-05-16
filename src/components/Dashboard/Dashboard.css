@@ -108,3 +108,11 @@
 .book-lending-submenu p {
   padding: var(--spacing-sm);
 }
+
+.sidebar-logout {
+  position: absolute;
+  width: 100%;
+  text-align: center;
+}
+
+

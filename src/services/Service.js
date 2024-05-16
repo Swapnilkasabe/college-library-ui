@@ -1,8 +1,14 @@
-// Function to make an API call
-const apiCall = async (url, headers) => {
-  return await fetch(url, headers).then((response) => response.json());
-};
+import customErrorHandler from "../utilities/customErrorHandler";
 
+// Function to make API calls with error handling
+const apiCall = async (url, headers) => {
+  try {
+    const response = await fetch(url, headers).then(customErrorHandler);
+    return response;
+  } catch (error) {
+    console.error("Error:", error);
+  }
+};
 // Function to make a GET request
 export const getCall = async (url, headers) =>
   await apiCall(url, { method: "GET", headers }).then((res) => res);
