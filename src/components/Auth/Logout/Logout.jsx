@@ -1,8 +1,8 @@
 import React, { useState } from 'react';
-import { useAppContext } from '../../../contexts/AppContext.Provider'; 
 import { Link, useNavigate } from 'react-router-dom';
 import { Typography } from '@mui/material';
 import ExitToAppIcon from '@mui/icons-material/ExitToApp';
+import { useAppContext } from '../../../contexts/AppContext.Provider'; 
 import localStorageService from '../../../services/localStorageService';
 
 const Logout = () => {
@@ -13,8 +13,10 @@ const Logout = () => {
     // Function for logout
     const handleLogout = () => {
         try {
-            const response = localStorageService.clear();
+            // Clear local storage
+            localStorageService.clear();
             setIsLogin(false);
+            // Navigate to login page
             navigate("/login", {replace:true});
         } catch (error) {
             setLogoutError("An error occurred. Please try again.");

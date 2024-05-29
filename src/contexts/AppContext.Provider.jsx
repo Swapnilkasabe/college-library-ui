@@ -16,7 +16,7 @@ const AppContextProvider = ({ children }) => {
     setNotificationOptions({message: message, severity: severity, autoClose: autoClose});
   } 
 
-   // Function to handle notification close
+    // Function to handle notification close
   const notificationCloseHandler = () =>{
     setShowNotification(false);
     setNotificationOptions(defaultNotificationOptions);

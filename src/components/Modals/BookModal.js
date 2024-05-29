@@ -1,5 +1,12 @@
 import React, { useState, useEffect } from "react";
-import { Modal, Button, TextField, Box, IconButton } from "@mui/material";
+import {
+  Modal,
+  Button,
+  TextField,
+  Box,
+  IconButton,
+  Typography,
+} from "@mui/material";
 import { isEmptyString } from "../../utilities/helper";
 import CloseIcon from "@mui/icons-material/Close";
 
@@ -22,7 +29,8 @@ const AddBookModal = ({ isOpen, onClose, onAdd, initialBookData }) => {
   const handleAdd = () => {
     const { errors, isError } = bookCreationValidation(bookData);
     if (isError) {
-      throw new Error("Error adding book");
+      setErrors(errors);
+      return;
     }
     onAdd(bookData);
     setBookData(DefaultData);
@@ -59,7 +67,7 @@ const AddBookModal = ({ isOpen, onClose, onAdd, initialBookData }) => {
     <Modal open={isOpen} onClose={onCloseHandle}>
       <Box className="modal-content">
         <Box className="modal-header">
-          <h2>{modeTitle} Book</h2>
+          <Typography variant="h5">{modeTitle} Book</Typography>
           <IconButton onClick={onCloseHandle} className="close-icon">
             <CloseIcon />
           </IconButton>
@@ -73,7 +81,11 @@ const AddBookModal = ({ isOpen, onClose, onAdd, initialBookData }) => {
               className="input-field"
               fullWidth
               error={!!errors.title}
-              helperText={errors.title}
+              helperText={
+                errors.title && (
+                  <span className="modal-error">{errors.title}</span>
+                )
+              }
             />
           </Box>
           <Box>
@@ -84,7 +96,11 @@ const AddBookModal = ({ isOpen, onClose, onAdd, initialBookData }) => {
               className="input-field"
               fullWidth
               error={!!errors.author}
-              helperText={errors.author}
+              helperText={
+                errors.author && (
+                  <span className="modal-error">{errors.author}</span>
+                )
+              }
             />
           </Box>
           <Box>
@@ -95,7 +111,11 @@ const AddBookModal = ({ isOpen, onClose, onAdd, initialBookData }) => {
               className="input-field"
               fullWidth
               error={!!errors.description}
-              helperText={errors.description}
+              helperText={
+                errors.description && (
+                  <span className="modal-error">{errors.description}</span>
+                )
+              }
             />
           </Box>
           <Box>
@@ -106,7 +126,11 @@ const AddBookModal = ({ isOpen, onClose, onAdd, initialBookData }) => {
               className="input-field"
               fullWidth
               error={!!errors.bookId}
-              helperText={errors.bookId}
+              helperText={
+                errors.bookId && (
+                  <span className="modal-error">{errors.bookId}</span>
+                )
+              }
               disabled={isEditMode}
             />
           </Box>
