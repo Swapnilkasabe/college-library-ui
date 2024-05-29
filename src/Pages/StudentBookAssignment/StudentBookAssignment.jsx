@@ -74,7 +74,6 @@ const StudentBookAssignment = () => {
         selectedStudent?._id
       );
       setIssuedBooks(transactions);
-      console.log("Fetched issued books:", transactions);
     } catch (error) {
       notificationHandler(true, "Error fetching issued books", "error");
       console.error("Error fetching issued books:", error);
@@ -132,12 +131,10 @@ const StudentBookAssignment = () => {
   // Function to handle returning a book for the selected student
   const handleReturnBook = async () => {
     try {
-      console.log("Selected Book:", selectedBook);
       await updateReturnedDate(selectedBook._id);
       const updatedBooks = issuedBooks.filter(
         (book) => book._id !== selectedBook._id
       );
-      console.log("Updated Books:", updatedBooks);
       setIssuedBooks(updatedBooks);
       setOpenRenewReturnModal(false);
       notificationHandler(true, "Book returned successfully", "success");

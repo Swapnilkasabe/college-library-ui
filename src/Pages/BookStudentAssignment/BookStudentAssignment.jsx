@@ -76,9 +76,7 @@ const BookStudentAssignment = () => {
   const fetchIssuedStudents = async (bookId) => {
     try {
       const issuedStudents = await getTransactionByBookId(bookId);
-      console.log("Fetched issued students:", issuedStudents);
       setIssuedStudents(issuedStudents); 
-      console.log("Fetched issued students:", issuedStudents);
     } catch (error) {
       console.error("Error fetching issued students", error);
       notificationHandler(true, "Error fetching issued students", "error");
