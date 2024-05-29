@@ -30,7 +30,6 @@ const AppRoutes = () => {
       <Route path="/reset/:token" element={<PasswordReset />} />
 
       <Route element={<PrivateRoute />}>
-        <Route path="/" element={<>Dashboard Page</>} />
         <Route path="/student" element={<Student />} />
         <Route path="/book" element={<Book />} />
         <Route

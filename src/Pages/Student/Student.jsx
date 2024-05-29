@@ -1,8 +1,16 @@
-import React, {useEffect, useState } from "react";
-import { Box, Grid, Typography, Button, Dialog, DialogTitle, DialogContent, DialogActions } from "@mui/material";
-import StudentModal, {
-  DefaultData,
-} from "../../components/Modals/StudentModal";
+import React, { useEffect, useState } from "react";
+import {
+  Box,
+  Grid,
+  Typography,
+  Button,
+  Dialog,
+  DialogTitle,
+  DialogContent,
+  DialogActions,
+  Tooltip,
+} from "@mui/material";
+import StudentModal, { DefaultData } from "../../components/Modals/StudentModal";
 import GenericTable from "../../components/Common/GenericTable";
 import { isEmptyString } from "../../utilities/helper";
 import {
@@ -10,44 +18,53 @@ import {
   DeleteIconButton,
   EditIconButton,
 } from "../../components/Icons/Icons";
-import "../../commonStyles/Pages.css";
-import { studentCreationValidation, studentUpdateValidation } from "../../utilities/formValidation";
-import { createStudent, deleteStudent, getAllStudents, updateStudent } from "../../services/student.service";
+import {
+  studentCreationValidation,
+  studentUpdateValidation,
+} from "../../utilities/formValidation";
+import {
+  createStudent,
+  deleteStudent,
+  getAllStudents,
+  updateStudent,
+} from "../../services/student.service";
 import { useAppContext } from "../../contexts/AppContext.Provider";
+import "../../commonStyles/Pages.css";
+
 
 const Student = () => {
   // State for storing student data
   const [students, setStudents] = useState([]);
-
   // State for managing the currently edited student
   const [editingStudent, setEditingStudent] = useState(DefaultData);
-
   // State for controlling the visibility of the add modal
   const [isModalOpen, setIsModalOpen] = useState(false);
-
   //State for controlling the visibilty of the delete confirmation dialog
   const [deleteConfirmationOpen, setDeleteConfirmationOpen] = useState(false);
-
   //State for managing the delete student operation
   const [deletingStudent, setDeletingStudent] = useState(null);
-
+   // State for managing the total number of students
+   const [totalStudents, setTotalStudents] = useState(0);
+   // State for managing the current page number
+   const [currentPage, setCurrentPage] = useState(1);
+   
   // Access state from context for displaying notification
   const { notificationHandler } = useAppContext();
 
   // Effect to fetch students on component mount
   useEffect(() => {
-
-
     fetchStudents();
-  }, []);
-  
-  // Function to fetch all students
+  }, [currentPage]); 
+
+   // Function to fetch all students
   const fetchStudents = async () => {
     try {
-      const {students} = await getAllStudents();
+      const { students, total } = await getAllStudents(currentPage); 
       setStudents(students);
+      setTotalStudents(total); 
     } catch (error) {
-      console.error('Error fetching students', error);
+      console.error("Error fetching students", error);
+      notificationHandler(true, "Error fetching students", "error");
     }
   };
 
@@ -57,81 +74,69 @@ const Student = () => {
     setEditingStudent(!isEmptyString(student?.studentId) ? student : DefaultData);
   };
 
-  // Function to close the add student modal
+    // Function to close the add student modal
   const closeAddAndEditModal = () => {
     setIsModalOpen(false);
     setEditingStudent(DefaultData);
   };
 
-// Function to add a new student
-const handleAddStudent = async (newStudent) => {
-  try {
-    let response;
+  // Function to add and update student
+  const handleAddStudent = async (newStudent) => {
+    try {
+      let response;
+      if (newStudent?._id) {
+        const { errors, isError } = studentUpdateValidation(newStudent);
+        if (isError) {
+          notificationHandler(true, "Validation error: " + JSON.stringify(errors), "error");
+          return;
+        }
+        response = await updateStudent(newStudent.studentId, newStudent);
+      } else {
+        const { errors, isError } = studentCreationValidation(newStudent);
+        if (isError) {
+          notificationHandler(true, "Validation error: " + JSON.stringify(errors), "error");
+          return;
+        }
+        response = await createStudent(newStudent);
+      }
 
-    if (newStudent?._id) {
-      const {errors, isError} = studentUpdateValidation(newStudent);   
-      if (isError) {
-        throw new Error("Validation error: " + errors); 
-         }
-      response = await handleUpdateStudent(newStudent);
-    } 
-    else {
-      const {errors, isError} = studentCreationValidation(newStudent);
-      if (isError) {
-         throw new Error("Validation error: " + errors); 
-         }
-      response = await createStudent(newStudent);
+      if (response?.errors?.length > 0) {
+        console.error("Validation errors:", JSON.stringify(response.errors));
+        notificationHandler(true, "Validation errors occurred", "error");
+        return;
+      }
+
+      const successMessage = newStudent?._id
+        ? "Successfully updated student"
+        : "Successfully added student";
+      notificationHandler(true, successMessage, "success");
+
+      fetchStudents();
+      closeAddAndEditModal();
+    } catch (error) {
+      console.error("Error adding/updating student", error);
+      notificationHandler(true, "Error adding/updating student", "error");
     }
-    if (response && response.errors && response.errors.length > 0) {
-      console.error("Validation errors:", response.errors);
-      return;
-    }   
-    if (newStudent?._id) {
-      notificationHandler(true, "Successfully updated student", "success");
-    } else {
-      notificationHandler(true, "Successfully added student", "success");
-    }
-    fetchStudents();
-  } catch (error) {
-    console.error('Error adding student', error);
-  }
-  setIsModalOpen(false);
-};
+  };
 
-// Function to update a student
-const handleUpdateStudent = async (updatedStudent) => {
-  try {
-     const {errors, isError} = studentUpdateValidation(updatedStudent);
-  if (isError) {
-    throw new Error("Validation error: " + errors);
-  
-  }
-    await updateStudent(updatedStudent.studentId, updatedStudent);
-    fetchStudents();
-    notificationHandler(true, "Successfully updated student", "success");
-  } catch (error) {
-    console.error('Error updating student:', error);
-  }
-
-}
-  
   // Function to delete a student
-  const handleDeleteStudent = async (deletedStudent) => {
-    setDeletingStudent(deletedStudent);
+  const handleDeleteStudent = (student) => {
+    setDeletingStudent(student.studentId);
     setDeleteConfirmationOpen(true);
   };
 
-   // Function for delete confirmation
+  // Function for delete confirmation
   const confirmDelete = async () => {
     try {
-      const res = await deleteStudent(deletingStudent.studentId);  
+      await deleteStudent(deletingStudent);
       fetchStudents();
       notificationHandler(true, "Successfully deleted student", "success");
     } catch (error) {
-      console.error('Error deleting student', error);
+      console.error("Error deleting student", error);
+      notificationHandler(true, "Error deleting student", "error");
     }
     setDeleteConfirmationOpen(false);
-  }
+  };
 
   // Define table columns
   const columns = [
@@ -141,28 +146,29 @@ const handleUpdateStudent = async (updatedStudent) => {
     { key: "phoneNumber", label: "Phone" },
   ];
 
-  // Define table actions with custom icons
+// Define table actions with custom icons
   const actions = [
-    { handler: openAddAndEditModal, icon: <EditIconButton/> },
+    {
+      handler: openAddAndEditModal,
+      icon: <EditIconButton />,
+      tooltip: "Edit Student",
+    },
     {
       handler: handleDeleteStudent,
       icon: <DeleteIconButton />,
+      tooltip: "Delete Student",
     },
   ];
 
+  const limit = 5;
+
   return (
-    <Grid
-      container
-      justifyContent="center"
-      alignItems="center"
-      className="form-container"
-    >
+    <Grid container direction="column" alignItems="center" className="form-container">
       <Typography variant="h5" className="heading">
         Student Page
       </Typography>
-
-      <Grid>
-        <Box className="button-container">
+      <Box className="button-container">
+        <Tooltip title="Click to add a new student" arrow>
           <Button
             variant="outlined"
             startIcon={<AddIconButton />}
@@ -170,37 +176,36 @@ const handleUpdateStudent = async (updatedStudent) => {
           >
             ADD
           </Button>
-        </Box>
-
-        <Box className="table-container">
-          <GenericTable data={students} columns={columns} actions={actions} />
-        </Box>
-      </Grid>
+        </Tooltip>
+      </Box>
+      <Box className="table-container">
+        <GenericTable
+          data={students}
+          columns={columns}
+          actions={actions}
+          total={totalStudents} 
+          limit={limit} 
+          page={currentPage} 
+          onPageChange={setCurrentPage} 
+        />
+      </Box>
       {/* Student modal component  */}
       <StudentModal
         isOpen={isModalOpen}
         onClose={closeAddAndEditModal}
         onAdd={handleAddStudent}
-        initialStudentData={
-          isEmptyString(editingStudent.studentId) ? DefaultData : editingStudent
-        }
-      /> 
+        initialStudentData={isEmptyString(editingStudent.studentId) ? DefaultData : editingStudent}
+      />
       {/* Component for delete confirmation */}
-      <Dialog open= {deleteConfirmationOpen} onClose={() => setDeleteConfirmationOpen(false)}>
-      <DialogTitle>
-        Delete Student
-      </DialogTitle>
-      <DialogContent>
-      Are you sure you want to delete?
-      </DialogContent>
-      <DialogActions>
-        <Button onClick={confirmDelete} color="error">
-           Delete
-        </Button>
-        <Button onClick={() => setDeleteConfirmationOpen(false)}>
-           Cancel
-        </Button>
-      </DialogActions>
+      <Dialog open={deleteConfirmationOpen} onClose={() => setDeleteConfirmationOpen(false)}>
+        <DialogTitle>Delete Student</DialogTitle>
+        <DialogContent>Are you sure you want to delete?</DialogContent>
+        <DialogActions>
+          <Button onClick={confirmDelete} color="error">
+            Delete
+          </Button>
+          <Button onClick={() => setDeleteConfirmationOpen(false)}>Cancel</Button>
+        </DialogActions>
       </Dialog>
     </Grid>
   );

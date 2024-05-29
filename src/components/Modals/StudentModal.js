@@ -27,7 +27,7 @@ const StudentModal = ({ isOpen, onClose, onAdd, initialStudentData }) => {
   const handleAdd = () => {
     const { errors, isError } = studentCreationValidation(studentData);
     if (isError) {
-      throw new Error("Error creating student");
+      setErrors(errors);
       return;
     }
     onAdd(studentData);
@@ -37,7 +37,6 @@ const StudentModal = ({ isOpen, onClose, onAdd, initialStudentData }) => {
 
   // Handle input change
   const handleOnChange = (key) => (e) => {
-    e.preventDefault();
     const { value } = e.target;
     setStudentData((prevStudentData) => ({ ...prevStudentData, [key]: value }));
   };
@@ -52,18 +51,13 @@ const StudentModal = ({ isOpen, onClose, onAdd, initialStudentData }) => {
   const isEditMode = !isEmptyString(initialStudentData.studentId);
 
   useEffect(() => {
-    if (!isEmptyString(initialStudentData.studentId)) {
+    if (isEditMode) {
       setStudentData(initialStudentData);
     }
   }, [isOpen, initialStudentData]);
 
-  const modeTitle = isEmptyString(initialStudentData.studentId)
-    ? "Add"
-    : "Update";
+  const modeTitle = isEditMode ? "Update" : "Add";
 
-  if (!isOpen) {
-    return <></>;
-  }
   return (
     <Modal open={isOpen} onClose={onCloseHandle}>
       <Box className="modal-content">
@@ -82,7 +76,11 @@ const StudentModal = ({ isOpen, onClose, onAdd, initialStudentData }) => {
               className="input-field"
               fullWidth
               error={!!errors.name}
-              helperText={errors.name}
+              helperText={
+                errors.name && (
+                  <span className="modal-error">{errors.name}</span>
+                )
+              }
             />
           </Box>
           <Box>
@@ -93,7 +91,11 @@ const StudentModal = ({ isOpen, onClose, onAdd, initialStudentData }) => {
               className="input-field"
               fullWidth
               error={!!errors?.studentId}
-              helperText={errors?.studentId}
+              helperText={
+                errors.studentId && (
+                  <span className="modal-error">{errors.studentId}</span>
+                )
+              }
               disabled={isEditMode}
             />
           </Box>
@@ -105,7 +107,11 @@ const StudentModal = ({ isOpen, onClose, onAdd, initialStudentData }) => {
               className="input-field"
               fullWidth
               error={!!errors.email}
-              helperText={errors.email}
+              helperText={
+                errors.email && (
+                  <span className="modal-error">{errors.email}</span>
+                )
+              }
             />
           </Box>
           <Box>
@@ -116,17 +122,25 @@ const StudentModal = ({ isOpen, onClose, onAdd, initialStudentData }) => {
               className="input-field"
               fullWidth
               error={!!errors.phone}
-              helperText={errors.phone}
+              helperText={
+                errors.phone && (
+                  <span className="modal-error">{errors.phone}</span>
+                )
+              }
             />
           </Box>
-          <div className="modal-buttons">
+          <Box className="modal-buttons">
             <Button variant="contained" color="primary" onClick={handleAdd}>
               {modeTitle} Student
             </Button>
-            <Button onClick={onCloseHandle} variant="contained">
+            <Button
+              onClick={onCloseHandle}
+              variant="contained"
+              color="secondary"
+            >
               Cancel
             </Button>
-          </div>
+          </Box>
         </form>
       </Box>
     </Modal>

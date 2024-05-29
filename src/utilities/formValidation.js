@@ -111,6 +111,7 @@ export const studentCreationValidation = (student) => {
     isError = true;
     errors.email = "Email is required";
   } else if (!isValidEmail(student.email)) {
+    isError = true;
     errors.email = "Invalid email format";
   }
 
@@ -119,7 +120,7 @@ export const studentCreationValidation = (student) => {
     errors.phone = "Phone Number is required";
   }
 
-  return errors;
+  return { errors, isError };
 };
 
 // Function to validate student update form fields
@@ -157,19 +158,24 @@ const isValidEmail = (email) => {
 export const bookCreationValidation = (book) => {
   const errors = { title: "", author: "", description: "", bookId: "" };
   let isError = false;
+
   if (isEmptyString(book.title)) {
+    isError = true;
     errors.title = "Title is required";
   }
 
   if (isEmptyString(book.author)) {
+    isError = true;
     errors.author = "Author is required";
   }
 
   if (isEmptyString(book.description)) {
+    isError = true;
     errors.description = "Description is required";
   }
 
   if (isEmptyString(book.bookId)) {
+    isError = true;
     errors.bookId = "Book ID is required";
   }
 
