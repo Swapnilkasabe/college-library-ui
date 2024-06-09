@@ -1,3 +1,5 @@
+@import url("../../App.css");
+
 body .custom-appbar {
   position: fixed;
   top: 0;
@@ -12,4 +14,10 @@ body .custom-appbar {
   text-decoration: none;
   font-weight: 700;
   color: rgb(233,83,75);
+   display: flex;
+  align-items: center; 
+}
+
+.header-link .MuiSvgIcon-root {
+  margin-right: var(--spacing-xs); 
 }

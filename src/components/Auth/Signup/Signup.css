@@ -71,5 +71,15 @@
     background-color: #388e3c; 
   }
 
+  .error-message {
+    position: absolute;
+    bottom: -1.25rem;
+    left: 0;
+    color: red;
+    font-size: var(--font-size-sm);
+  }
+
+
+
 
 

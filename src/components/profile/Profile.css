@@ -1,0 +1,62 @@
+@import url("../../App.css");
+
+.profile-container {
+  min-height: 90vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background-color: #f5f5f5;
+}
+
+.profile-container .profile-paper {
+  padding: var(--spacing-xl) var(--spacing-lg);
+  width: 100%;
+  max-width: calc(var(--spacing-xl)*14);
+  text-align: center;
+  border-radius: var(--spacing-lg);
+  box-shadow: 0 .25rem .75rem rgba(0, 0, 0, 0.1);
+  background-color: #ffffff;
+}
+
+.profile-container .profile-avatar {
+  width: calc(var(--spacing-xl)*3);
+  height: calc(var(--spacing-xl)*3);
+  margin: 0 auto 1.25rem;
+}
+
+.profile-container .profile-text {
+  font-size: var(--font-size-md);
+  color: #333333;
+  margin: .625rem 0;
+}
+
+.profile-container .profile-button {
+  margin-top: var(--spacing-lg);
+  width: 80%; 
+  padding: .5rem 0; 
+  border-radius: var(--spacing-lg);
+  font-size: var(--font-size-sm); 
+  font-weight: bold;
+  box-shadow: 0 .1875rem .3125rem rgba(0, 0, 0, 0.2);
+  transition: background-color 0.3s ease, transform 0.3s ease;
+}
+
+.profile-container .edit-button {
+  background-color: #007bff;
+  color: #fff;
+}
+
+.profile-container .edit-button:hover {
+  background-color: #0056b3;
+  transform: translateY(-0.125rem);
+}
+
+.profile-container .back-button {
+  background-color: #28a745;
+  color: #fff;
+}
+
+.profile-container .back-button:hover {
+  background-color: #1e7e34;
+  transform: translateY(-0.125rem);
+}

@@ -8,6 +8,7 @@ import StudentBookAssignment from "../Pages/StudentBookAssignment/StudentBookAss
 import Book from "../Pages/Book/Book";
 import Student from "../Pages/Student/Student";
 import { useAppContext } from "../contexts/AppContext.Provider";
+import Profile from "../components/profile/Profile";
 
 // PrivateRoute component to handle routes that require authentication
 const PrivateRoute = () => {
@@ -29,17 +30,12 @@ const AppRoutes = () => {
       />
       <Route path="/reset/:token" element={<PasswordReset />} />
 
-      <Route element={<PrivateRoute />}>
+      <Route path="/" element={<PrivateRoute />}>
         <Route path="/student" element={<Student />} />
         <Route path="/book" element={<Book />} />
-        <Route
-          path="/studentBookAssignment"
-          element={<StudentBookAssignment />}
-        />
-        <Route
-          path="/bookStudentAssignment"
-          element={<BookStudentAssignment />}
-        />
+        <Route path="/issue-book" element={<StudentBookAssignment />} />
+        <Route path="/assign-borrower" element={<BookStudentAssignment />} />
+        <Route path="/profile" element={<Profile />} />
       </Route>
     </Routes>
   );

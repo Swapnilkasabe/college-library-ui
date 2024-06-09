@@ -31,7 +31,6 @@ import {
 import { useAppContext } from "../../contexts/AppContext.Provider";
 import "../../commonStyles/Pages.css";
 
-
 const Student = () => {
   // State for storing student data
   const [students, setStudents] = useState([]);
@@ -39,29 +38,30 @@ const Student = () => {
   const [editingStudent, setEditingStudent] = useState(DefaultData);
   // State for controlling the visibility of the add modal
   const [isModalOpen, setIsModalOpen] = useState(false);
-  //State for controlling the visibilty of the delete confirmation dialog
+  // State for controlling the visibility of the delete confirmation dialog
   const [deleteConfirmationOpen, setDeleteConfirmationOpen] = useState(false);
-  //State for managing the delete student operation
+  // State for managing the delete student operation
   const [deletingStudent, setDeletingStudent] = useState(null);
-   // State for managing the total number of students
-   const [totalStudents, setTotalStudents] = useState(0);
-   // State for managing the current page number
-   const [currentPage, setCurrentPage] = useState(1);
-   
+  // State for managing the total number of students
+  const [totalStudents, setTotalStudents] = useState(0);
+  // State for managing the current page number
+  const [currentPage, setCurrentPage] = useState(1);
+  // State for managing the number of rows per page
+  const [rowsPerPage, setRowsPerPage] = useState(5);
+  // State for managing the total number of pages
+  const [pageCount, setPageCount] = useState(0);
+
   // Access state from context for displaying notification
   const { notificationHandler } = useAppContext();
 
-  // Effect to fetch students on component mount
-  useEffect(() => {
-    fetchStudents();
-  }, [currentPage]); 
-
-   // Function to fetch all students
+  // Function to fetch all students
   const fetchStudents = async () => {
     try {
-      const { students, total } = await getAllStudents(currentPage); 
+      const { students, total } = await getAllStudents(currentPage, rowsPerPage);
       setStudents(students);
-      setTotalStudents(total); 
+      setTotalStudents(total);
+      const calculatedPageCount = Math.ceil(total / rowsPerPage); 
+      setPageCount(calculatedPageCount); 
     } catch (error) {
       console.error("Error fetching students", error);
       notificationHandler(true, "Error fetching students", "error");
@@ -74,7 +74,7 @@ const Student = () => {
     setEditingStudent(!isEmptyString(student?.studentId) ? student : DefaultData);
   };
 
-    // Function to close the add student modal
+  // Function to close the add student modal
   const closeAddAndEditModal = () => {
     setIsModalOpen(false);
     setEditingStudent(DefaultData);
@@ -146,7 +146,7 @@ const Student = () => {
     { key: "phoneNumber", label: "Phone" },
   ];
 
-// Define table actions with custom icons
+  // Define table actions with custom icons
   const actions = [
     {
       handler: openAddAndEditModal,
@@ -160,7 +160,20 @@ const Student = () => {
     },
   ];
 
-  const limit = 5;
+  // Function to handle rows per page change
+  const handleRowsPerPageChange = (newRowsPerPage) => {
+    setRowsPerPage(newRowsPerPage);
+    setCurrentPage(1); 
+  };
+
+  // Function to handle page change
+  const handlePageChange = (newPage) => {
+    setCurrentPage(newPage);
+  };
+
+  useEffect(() => {
+    fetchStudents();
+  }, [currentPage, rowsPerPage]);
 
   return (
     <Grid container direction="column" alignItems="center" className="form-container">
@@ -183,10 +196,12 @@ const Student = () => {
           data={students}
           columns={columns}
           actions={actions}
-          total={totalStudents} 
-          limit={limit} 
-          page={currentPage} 
-          onPageChange={setCurrentPage} 
+          total={totalStudents}
+          limit={rowsPerPage}
+          page={currentPage}
+          pageCount={pageCount}
+          onPageChange={handlePageChange}
+          onRowsPerPageChange={handleRowsPerPageChange}
         />
       </Box>
       {/* Student modal component  */}
@@ -209,6 +224,7 @@ const Student = () => {
       </Dialog>
     </Grid>
   );
-};
-
-export default Student;
+  };
+  
+  export default Student;
+  

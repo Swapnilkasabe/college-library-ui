@@ -1,6 +1,6 @@
 import { APIURL } from "../utilities/constants";
 import { getToken } from "../utilities/helper";
-import { postCall } from "./Service";
+import { getCall, postCall } from "./Service";
 
 // Function to handle user login
 export const userLogin = async (loginData) => {
@@ -40,3 +40,7 @@ export const passwordReset = async (passwordResetData) => {
   );
   return response;
 };
+
+// Function to fetch user details
+export const fetchUserDetails = async () =>
+  await getCall(`${APIURL}/users/profile`, getToken()).then((res) => res);
