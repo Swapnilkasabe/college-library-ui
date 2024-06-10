@@ -1,11 +1,12 @@
 import React, { useState, useEffect } from "react";
 import {
+  Autocomplete,
+  TextField,
   Modal,
   FormControl,
   Button,
-  Select,
-  MenuItem,
   IconButton,
+  Typography,
 } from "@mui/material";
 import { getAllBooks, updateBook } from "../../services/book.service";
 import CloseIcon from "@mui/icons-material/Close";
@@ -29,7 +30,9 @@ const BookIssuanceModal = ({
   // State to store the list of books or students
   const [list, setList] = useState([]);
   // State to store the selected book or student
-  const [selectedItem, setSelectedItem] = useState("");
+  const [selectedItem, setSelectedItem] = useState(null);
+  // State to store the book or student item details
+  const [selectedItemDetails, setSelectedItemDetails] = useState(null);
 
   // Fetching books or students based on the mode
   useEffect(() => {
@@ -38,13 +41,17 @@ const BookIssuanceModal = ({
     } else if (mode === "assignStudent") {
       fetchStudents();
     }
-  }, [mode]);
+  }, [mode, selectedBook, selectedStudent]);
 
   // Fetch all books
   const fetchBooks = async () => {
     try {
-      const { books } = await getAllBooks();
-      setList(books);
+      const response = await getAllBooks();
+      if (response && response.books) {
+        setList(response.books);
+      } else {
+        throw new Error("Invalid response format");
+      }
     } catch (error) {
       notificationHandler(true, "Error fetching books", "error");
       console.error("Error fetching books", error);
@@ -54,8 +61,12 @@ const BookIssuanceModal = ({
   // Fetch all students
   const fetchStudents = async () => {
     try {
-      const { students } = await getAllStudents();
-      setList(students);
+      const response = await getAllStudents();
+      if (response && response.students) {
+        setList(response.students);
+      } else {
+        throw new Error("Invalid response format");
+      }
     } catch (error) {
       notificationHandler(true, "Error fetching students", "error");
       console.error("Error fetching students", error);
@@ -63,8 +74,9 @@ const BookIssuanceModal = ({
   };
 
   // Function to handle change in the selected book or student
-  const handleItemChange = (e) => {
-    setSelectedItem(e.target.value);
+  const handleItemChange = (event, newValue) => {
+    setSelectedItem(newValue);
+    setSelectedItemDetails(newValue);
   };
 
   // Handle form submission
@@ -97,6 +109,7 @@ const BookIssuanceModal = ({
         notificationHandler(true, "Successfully assigned borrower", "success");
       }
       setSelectedItem("");
+      setSelectedItemDetails("");
       onClose();
       onBookIssued();
     } catch (error) {
@@ -108,6 +121,7 @@ const BookIssuanceModal = ({
   // Handle close button click
   const onCloseHandle = () => {
     setSelectedItem("");
+    setSelectedItemDetails(null);
     setList([]);
     onClose();
   };
@@ -118,9 +132,10 @@ const BookIssuanceModal = ({
         <div className="modal-header">
           <h3>
             {mode === "issueBook"
-              ? `Issue Book to "${selectedStudentName}"`
-              : `Assign Borrower for "${selectedBookTitle}"`}
+              ? `Issue Book to "${selectedStudentName || "Selected Student"}"`
+              : `Assign Borrower for "${selectedBook?.title || "a Book"}"`}
           </h3>
+
           <IconButton
             onClick={onCloseHandle}
             className="close-icon close-button"
@@ -130,26 +145,55 @@ const BookIssuanceModal = ({
         </div>
         <form className="modal-form">
           <FormControl>
-            <Select
+            <Autocomplete
               value={selectedItem}
               onChange={handleItemChange}
-              displayEmpty
-              className="dropdown-select"
-            >
-              <MenuItem value="" disabled className="select-option">
-                {mode === "issueBook" ? "Select Book" : "Select Student"}
-              </MenuItem>
-              {list.map((item) => (
-                <MenuItem
-                  key={item._id}
-                  value={item._id}
-                  className="dropdown-item"
-                >
-                  {mode === "issueBook" ? item.title : item.name}
-                </MenuItem>
-              ))}
-            </Select>
+              options={list}
+              getOptionLabel={(option) =>
+                mode === "issueBook" ? option.title : option.name
+              }
+              renderInput={(params) => (
+                <TextField
+                  {...params}
+                  label={
+                    mode === "issueBook" ? "Select Book" : "Select Student"
+                  }
+                  variant="outlined"
+                />
+              )}
+            />
           </FormControl>
+          {selectedItemDetails && (
+            <div className="selected-item-details">
+              {mode === "issueBook" ? (
+                <div>
+                  <Typography variant="h6">Book Details</Typography>
+                  <Typography variant="body2">
+                    <strong>Title:</strong> {selectedItemDetails.title}
+                  </Typography>
+                  <Typography variant="body2">
+                    <strong>ID:</strong> {selectedItemDetails.bookId}
+                  </Typography>
+                  <Typography variant="body2">
+                    <strong>Author:</strong> {selectedItemDetails.author}
+                  </Typography>
+                </div>
+              ) : (
+                <div>
+                  <Typography variant="h6">Student Details</Typography>
+                  <Typography variant="body2">
+                    <strong>Name:</strong> {selectedItemDetails.name}
+                  </Typography>
+                  <Typography variant="body2">
+                    <strong>ID:</strong> {selectedItemDetails.studentId}
+                  </Typography>
+                  <Typography variant="body2">
+                    <strong>Email:</strong> {selectedItemDetails.email}
+                  </Typography>
+                </div>
+              )}
+            </div>
+          )}
           <div className="modal-buttons">
             <Button
               variant="contained"
@@ -157,7 +201,7 @@ const BookIssuanceModal = ({
               onClick={handleSubmit}
               disabled={!selectedItem}
             >
-              {mode === "issueBook" ? "Issue Book" : "Assign Student"}
+              {mode === "issueBook" ? "Issue Book" : "Assign Borrower"}
             </Button>
             <Button
               variant="contained"

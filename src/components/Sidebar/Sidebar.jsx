@@ -1,11 +1,5 @@
 import React from "react";
-import AccountBoxIcon from "@mui/icons-material/AccountBox";
-import MenuBookIcon from "@mui/icons-material/MenuBook";
-import LocalLibraryIcon from "@mui/icons-material/LocalLibrary";
-import LibraryBooksIcon from "@mui/icons-material/LibraryBooks";
-import CloseIcon from "@mui/icons-material/Close";
-import DoubleArrowIcon from "@mui/icons-material/DoubleArrow";
-import ArrowDropDownIcon from "@mui/icons-material/ArrowDropDown";
+import { AccountBox as AccountBoxIcon, MenuBook as MenuBookIcon, LocalLibrary as LocalLibraryIcon, LibraryBooks as LibraryBooksIcon, Close as CloseIcon, DoubleArrow as DoubleArrowIcon, ArrowDropDown as ArrowDropDownIcon } from "@mui/icons-material";
 import { IconButton, Typography, Grid } from "@mui/material";
 import { Link } from "react-router-dom";
 import Logout from '../../components/Auth/Logout/Logout.jsx'
@@ -37,9 +31,6 @@ const Sidebar = ({ active, setActive, sidebarOpen, setSidebarOpen }) => {
       >
         <div className="dashboard-logo">
           <LibraryBooksIcon />
-          <Typography variant="h6" component="p" className="logo-name">
-            Library
-          </Typography>
         </div>
         <Grid item>
           {/* Navigation options for different sections of the application */}
@@ -81,7 +72,7 @@ const Sidebar = ({ active, setActive, sidebarOpen, setSidebarOpen }) => {
             </Typography>
             {/* Submenu options for book lending */}
             <div className="book-lending-submenu">
-              <Link to={"/studentBookAssignment"} className="sidebar-link">
+              <Link to={"/issue-book"} className="sidebar-link">
                 <Typography
                   variant="body1"
                   component="p"
@@ -94,7 +85,7 @@ const Sidebar = ({ active, setActive, sidebarOpen, setSidebarOpen }) => {
                   Page
                 </Typography>
               </Link>
-              <Link to={"/bookStudentAssignment"} className="sidebar-link">
+              <Link to={"/assign-borrower"} className="sidebar-link">
                 <Typography
                   variant="body1"
                   component="p"

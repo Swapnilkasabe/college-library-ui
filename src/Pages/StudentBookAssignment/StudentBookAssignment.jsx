@@ -1,15 +1,17 @@
 import React, { useEffect, useState } from "react";
 import {
-  MenuItem,
-  FormControl,
-  Select,
   Typography,
   Box,
   Button,
   Tooltip,
+  Autocomplete,
+  TextField,
 } from "@mui/material";
-import AutorenewIcon from "@mui/icons-material/Autorenew";
-import KeyboardReturnIcon from "@mui/icons-material/KeyboardReturn";
+import {
+  Autorenew as AutorenewIcon,
+  KeyboardReturn as KeyboardReturnIcon,
+  Person as PersonIcon
+} from "@mui/icons-material";
 import GenericTable from "../../components/Common/GenericTable";
 import CardItem from "../../components/Common/CardItem";
 import RenewReturnModal from "../../components/Modals/RenewReturnModal";
@@ -22,26 +24,37 @@ import {
   updateReturnedDate,
 } from "../../services/bookTransaction.service";
 import { useAppContext } from "../../contexts/AppContext.Provider";
-import LibraryBooksIcon from "@mui/icons-material/LibraryBooks";
+import { getBookById } from "../../services/book.service";
 import "../../commonStyles/Pages.css";
 
+
+
 const StudentBookAssignment = () => {
-    // State for storing student data
+  // State for storing student data
   const [students, setStudents] = useState([]);
-    // State for managing selected student
+  // State for managing the selected student
   const [selectedStudent, setSelectedStudent] = useState(null);
-    // State for managing RenewReturnModal visibility
-    const [openRenewReturnModal, setOpenRenewReturnModal] = useState(false);
-    // State for managing book issuance modal
+  // State for managing Renew/Return modal visibility
+  const [openRenewReturnModal, setOpenRenewReturnModal] = useState(false);
+  // State for managing book issuance modal visibility
   const [openIssuanceModal, setOpenIssuanceModal] = useState(false);
   // State for managing issued books to students
   const [issuedBooks, setIssuedBooks] = useState([]);
-    // State for managing selected book
+  // State for managing the selected book
   const [selectedBook, setSelectedBook] = useState(null);
-    // State for managing the title of the selected book
+  // State for managing the name of the selected student
   const [selectedStudentName, setSelectedStudentName] = useState("");
+  // State for managing book details for the modal
+  const [bookDetails, setBookDetails] = useState(null);
+  // State for managing the modal mode (renew/return)
   const [modalMode, setModalMode] = useState(null);
-  // Accessing the notification handler to display notifications
+    // State for managing the current page number
+  const [currentPage, setCurrentPage] = useState(1);
+    // State for managing the number of rows per page
+  const [rowsPerPage, setRowsPerPage] = useState(5);
+    // State for managing the total number of pages
+  const [totalPages, setTotalPages] = useState(0);
+    // Accessing the notification handler to display notifications
   const { notificationHandler } = useAppContext();
 
   //Effect to fetch students on component mount
@@ -51,12 +64,12 @@ const StudentBookAssignment = () => {
 
   //Effect to fetch issued books on component mount
   useEffect(() => {
-    if (selectedStudent?._id) {
-      fetchIssuedBooks();
+    if (selectedStudent) {
+      fetchIssuedBooks(selectedStudent._id);
     }
-  }, [selectedStudent?._id]);
+  }, [selectedStudent, currentPage, rowsPerPage]);
 
-    // Function to fetch students
+  // Function to fetch students
   const fetchStudents = async () => {
     try {
       const { students } = await getAllStudents();
@@ -68,50 +81,73 @@ const StudentBookAssignment = () => {
   };
 
     // Function to fetch issued books
-  const fetchIssuedBooks = async () => {
+    const fetchIssuedBooks = async (studentId) => {
+    if (!studentId) return;
+
     try {
-      const transactions = await getTransactionByStudentId(
-        selectedStudent?._id
+      const { transactions, total } = await getTransactionByStudentId(
+        studentId,
+        currentPage,
+        rowsPerPage
       );
       setIssuedBooks(transactions);
+      setTotalPages(total);
     } catch (error) {
       notificationHandler(true, "Error fetching issued books", "error");
       console.error("Error fetching issued books:", error);
     }
   };
+  // Function to handle page change
+  const handlePageChange = (newPage) => {
+    setCurrentPage(newPage);
+  };
+
+  // Function to handle rows per page change
+  const handleRowsPerPageChange = (newRowsPerPage) => {
+    setRowsPerPage(newRowsPerPage);
+    setCurrentPage(1);
+  };
+
 
   // Function to handle onChange event
-  const handleStudentChange = (e) => {
-    const selectedId = e.target.value;
-    const selectedStudent = students.find(
-      (student) => student._id === selectedId
-    );
-    setSelectedStudent(selectedStudent);
-    setSelectedStudentName(selectedStudent.name);   
+  const handleStudentChange = (event, newValue) => {
+    setSelectedStudent(newValue);
+    setSelectedStudentName(newValue ? newValue.name : "");
+    if (newValue) {
+      fetchIssuedBooks(newValue._id);
+    }
   };
 
   // Function to handle renewing a book
-  const handleRenew = (book) => {
+  const handleRenew = async (book) => {
     setSelectedBook(book);
+    const details = await getBookById(book.bookId);
+    setBookDetails(details);
     setModalMode("renew");
     setOpenRenewReturnModal(true);
   };
 
   // Function to handle returning a book
-  const handleReturn = (book) => {
+  const handleReturn = async (book) => {
     setSelectedBook(book);
+    const details = await getBookById(book.bookId);
+    setBookDetails(details);
     setModalMode("return");
     setOpenRenewReturnModal(true);
   };
+
+  // Function to open book issuance modal
   const handleIssueBookClick = () => {
     setOpenIssuanceModal(true);
   };
 
+  // Function to close the Renew/Return modal and refresh issued books list
   const handleCloseRenewReturnModal = () => {
     setOpenRenewReturnModal(false);
     fetchIssuedBooks();
   };
 
+  // Function to close the Issuance modal and refresh issued books list
   const handleCloseIssuanceModal = () => {
     setOpenIssuanceModal(false);
     fetchIssuedBooks();
@@ -131,18 +167,26 @@ const StudentBookAssignment = () => {
   // Function to handle returning a book for the selected student
   const handleReturnBook = async () => {
     try {
-      await updateReturnedDate(selectedBook._id);
-      const updatedBooks = issuedBooks.filter(
-        (book) => book._id !== selectedBook._id
-      );
+      const response = await updateReturnedDate(selectedBook._id);
+      const updatedBooks = issuedBooks.filter((book) => book._id !== selectedBook._id);
       setIssuedBooks(updatedBooks);
       setOpenRenewReturnModal(false);
+
+      handleCloseRenewReturnModal();
       notificationHandler(true, "Book returned successfully", "success");
     } catch (error) {
       notificationHandler(true, "Error returning book", "error");
       console.error("Error returning book:", error);
     }
   };
+
+  const columns = [
+    { key: "name", label: "Name" },
+    { key: "studentId", label: "Student ID" },
+    { key: "email", label: "Email" },
+    { key: "phoneNumber", label: "Phone Number" },
+  ];
+
 
   // Define table columns
   const bookColumns = [
@@ -173,6 +217,7 @@ const StudentBookAssignment = () => {
     { key: "status", label: "Status" },
   ];
 
+
 // Define table actions with custom icons
 const actions = [
     {
@@ -192,67 +237,64 @@ const actions = [
   return (
     <Box className="page-container">
       <Box className="page-form-container">
-        <FormControl sx={{ m: 1, minWidth: 120 }} size="small">
-          <Select
-            value={selectedStudent ? selectedStudent._id : ""}
-            onChange={handleStudentChange}
-            displayEmpty
-            className="dropdown-select"
+        <Autocomplete
+          value={selectedStudent}
+          onChange={handleStudentChange}
+          options={students}
+          getOptionLabel={(option) => option.name}
+          filterOptions={(options, { inputValue }) =>
+            options.filter((option) =>
+              option.name?.toLowerCase().includes(inputValue.toLowerCase())
+            )
+          }
+          renderInput={(params) => (
+            <TextField {...params} label="Select Student" variant="outlined" size="small" className="autocomplete-input" />
+          )}
+          className="autocomplete"
+        />
+      </Box>
+      {selectedStudent ? (
+        <>
+          <CardItem
+            data={selectedStudent}
+            columns={columns}
+            image="Assets/user.png"
           >
-            <MenuItem value="" disabled className="select-option">
-              <em>Select Student</em>
-            </MenuItem>
-            {students.map((student) => (
-              <MenuItem
-                key={student._id}
-                value={student._id}
-                className="dropdown-item"
-              >
-                {student.name}
-              </MenuItem>
-            ))}
-          </Select>
-        </FormControl>
-      </Box>
-      {selectedStudent && (
-        <CardItem
-          data={selectedStudent}
-          columns={[
-            { key: "name", label: "Name" },
-            { key: "studentId", label: "Student ID" },
-            { key: "email", label: "Email" },
-            { key: "phoneNumber", label: "Phone Number" },
-          ]}
-          image="Assets/user.png"
-        >
-          <Tooltip title="Click to issue a new book" arrow>
+            <Tooltip title="Click to issue a new book" arrow>
+             
             <Button
-              variant="outlined"
-              startIcon={<AddIconButton />}
-              onClick={handleIssueBookClick}
-              className="issue-book-button"
-            >
-              Issue Book
-            </Button>
-          </Tooltip>
-        </CardItem>
+                variant="outlined"
+                startIcon={<AddIconButton />}
+                onClick={handleIssueBookClick} 
+                className="issue-book-button"
+              >
+                Issue Book
+              </Button>
+            </Tooltip>
+          </CardItem>
+          <Box className="table-container">
+            <div className="table-content">
+              <GenericTable
+                data={issuedBooks}
+                columns={bookColumns}
+                actions={actions}
+                page={currentPage}
+                total={totalPages}
+                limit={rowsPerPage}
+                onPageChange={handlePageChange}
+                onRowsPerPageChange={handleRowsPerPageChange}
+              />
+            </div>
+          </Box>
+        </>
+      ) : (
+        <Box className="no-option-selected-message">
+          <PersonIcon color="disabled" />
+          <Typography>
+            Please select a student from the dropdown to view their issued books
+          </Typography>
+        </Box>
       )}
-      <Box className="table-container">
-        <Typography variant="h5" className="table-heading">
-          <div className="heading-content">
-            <LibraryBooksIcon sx={{ marginRight: "0.5rem" }} />
-            <em>Issued Books:</em>
-          </div>
-        </Typography>
-
-        <div className="table-content">
-          <GenericTable
-            data={issuedBooks}
-            columns={bookColumns}
-            actions={actions}
-          />
-        </div>
-      </Box>
       {openRenewReturnModal && (
         <RenewReturnModal
           isOpen={openRenewReturnModal}

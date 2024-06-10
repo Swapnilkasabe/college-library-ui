@@ -14,16 +14,19 @@ import {
   AccountCircle as AccountCircleIcon,
   Logout as LogoutIcon,
 } from "@mui/icons-material";
-import { Link, useNavigate } from "react-router-dom";
+import { Link, useNavigate, useLocation } from "react-router-dom";
 import localStorageService from "../../services/localStorageService";
 import { useAppContext } from "../../contexts/AppContext.Provider";
 import "./Header.css";
 
-
 const Header = () => {
-  // State to manage the anchor element for profile menu
+  // State to manage the profile menu
   const [menuAnchor, setMenuAnchor] = useState(null);
+  // Hook for navigating between pages
   const navigate = useNavigate();
+  // Hook to get current location
+  const location = useLocation();
+  // Access states from context
   const { isLogin, setIsLogin } = useAppContext();
 
   // Function to handle opening the profile menu
@@ -40,14 +43,17 @@ const Header = () => {
   const handleLogout = () => {
     try {
       // Clear user data from local storage
-      localStorageService.clear(); 
-      setIsLogin(false); 
+      localStorageService.clear();
+      setIsLogin(false);
       // Redirect to the login page
-      navigate("/login", { replace: true }); 
+      navigate("/login", { replace: true });
     } catch (error) {
       console.error("Error logging out:", error);
     }
   };
+
+  // Check if the current path is the login page
+  const isLoginPage = location.pathname === "/login";
 
   return (
     <AppBar position="static" className="custom-appbar">
@@ -57,20 +63,31 @@ const Header = () => {
             <LibraryBooksIcon /> College Library
           </Link>
         </Typography>
-        {isLogin && (
+        {isLogin && !isLoginPage && (
           <div>
             {/* Profile icon button */}
-            <Tooltip title = "Profile" arrow>
-            <IconButton color="inherit" onClick={handleProfileMenuClick}>
-              <AccountCircleIcon />
-            </IconButton>
+            <Tooltip title="Quick Links" arrow>
+              <IconButton color="inherit" onClick={handleProfileMenuClick}>
+                <AccountCircleIcon />
+              </IconButton>
             </Tooltip>
             {/* Profile menu */}
             <Menu
               menuAnchor={menuAnchor}
-              open={menuAnchor}
+              open={Boolean(menuAnchor)}
               onClose={handleProfileMenuClose}
+              anchorOrigin={{
+                vertical: 'top',
+                horizontal: 'right',
+              }}
             >
+              <MenuItem
+                component={Link}
+                to="/"
+                onClick={handleProfileMenuClose}
+              >
+                Dashboard
+              </MenuItem>
               <MenuItem
                 component={Link}
                 to="/profile"
@@ -79,7 +96,7 @@ const Header = () => {
                 My Profile
               </MenuItem>
               <Divider />
-              {/* Logout icon button */}
+               {/* Logout icon button */}
               <MenuItem onClick={handleLogout}>
                 <LogoutIcon /> Logout
               </MenuItem>

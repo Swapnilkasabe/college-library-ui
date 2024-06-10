@@ -1,3 +1,5 @@
+@import url("../../App.css");
+
 .dashboard {
   display: grid;
   place-items: center;
@@ -56,12 +58,14 @@
   transform: translateX(0);
 }
 
-.dashboard-logo {
+.dashboard-card .dashboard-logo {
   margin: calc(var(--spacing-md)*3) 0;
   color: rgb(234, 68, 74);
-  font-size: var(--font-size-lg);
-  font-weight: 800;
   text-align: center;
+}
+.dashboard-logo .MuiSvgIcon-root {
+  width: calc(var(--spacing-md)*3); 
+  height: calc(var(--spacing-md)*3); 
 }
 
 .dashboard-card .dashboard-option {

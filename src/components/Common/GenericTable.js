@@ -17,26 +17,28 @@ import PropTypes from "prop-types";
 import "./GenericTable.css";
 
 // Reusable component for displaying tabular data with customizable columns and actions
-const GenericTable = ({ data, columns, actions }) => {
+const GenericTable = ({
+  data,
+  columns,
+  actions,
+  limit,
+  page,
+  onPageChange,
+}) => {
   // State for managing current page for pagination
-  const [page, setPage] = useState(1);
-  // Setting limit per page
-  const limit = 2;
+  const [rowsPerPage, setRowsPerPage] = useState(limit);
+
+  const handleRowsPerPageChange = (newLimit) => {
+    setRowsPerPage(newLimit);
+    onPageChange(1);
+  };
 
   // Calculating start and end index of items to display based on current page
-  const startIndex = (page - 1) * limit;
-  const endIndex = startIndex + limit;
+  const startIndex = (page - 1) * rowsPerPage;
+  const endIndex = startIndex + rowsPerPage;
 
   // Slice the data array based on start and end index
   const slicedData = data ? data.slice(startIndex, endIndex) : [];
-
-  // Function to handle page change
-  const handlePageChange = (newPage) => {
-    setPage(newPage);
-  };
-
-  // Calculating total pages based on number of items and limit
-  const totalPages = Math.ceil((data?.length || 0) / limit);
 
   return (
     <Grid item xs={12}>
@@ -63,6 +65,7 @@ const GenericTable = ({ data, columns, actions }) => {
               // Mapping over slicedData to render table rows
               slicedData.map((row) => (
                 <TableRow key={row._id}>
+                  {" "}
                   {/* Mapping over columns to render table cells */}
                   {columns.map((column) => (
                     <TableCell key={column.key}>
@@ -121,11 +124,10 @@ const GenericTable = ({ data, columns, actions }) => {
       </TableContainer>
       {/* Pagination */}
       <Pagination
-        total={data?.length || 0}
-        limit={limit}
         page={page}
-        onPageChange={handlePageChange}
-        pageCount={totalPages}
+        onPageChange={onPageChange}
+        rowsPerPage={rowsPerPage}
+        onRowsPerPageChange={handleRowsPerPageChange}
       />
     </Grid>
   );
@@ -148,6 +150,9 @@ GenericTable.propTypes = {
       handler: PropTypes.func.isRequired,
     })
   ),
+  limit: PropTypes.number.isRequired,
+  page: PropTypes.number.isRequired,
+  onPageChange: PropTypes.func.isRequired,
 };
 
 export default GenericTable;

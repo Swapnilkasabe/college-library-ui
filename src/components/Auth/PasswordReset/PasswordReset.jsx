@@ -2,22 +2,29 @@ import React, { useState } from "react";
 import { TextField, Button, Paper, Grid, Typography } from "@mui/material";
 import { useNavigate } from "react-router-dom";
 import { passwordResetValidation } from "../../../utilities/formValidation";
-import "./PasswordReset.css";
 import { checkEmailExists, passwordReset } from "../../../services/user.service";
 import useDebounce from "../../../hooks/useDebounce";
 import localStorageService from "../../../services/localStorageService";
+import "./PasswordReset.css";
 
 const PasswordReset = () => {
+  // State for managing the email 
   const [email, setEmail] = useState("");
+  // State for managing email input error 
   const [emailError, setEmailError] = useState("");
+  // State to check if email is verified
   const [emailVerified, setEmailVerified] = useState(false);
+  // State for managing the password input values
   const [passwords, setPasswords] = useState({ newPassword: "", confirmNewPassword: "" });
+  // State for managing password input error
   const [passwordError, setPasswordError] = useState("");
+  // State to check if the password successfully changed
   const [passwordChanged, setPasswordChanged] = useState(false);
+  
+  // Hook for navigating between pages
   const navigate = useNavigate();
 
-
-  // Debounce email change 
+  // Debounce email change
   const debouncedHandleEmailChange = useDebounce((value) => {
     setEmail(value);
     setEmailError("");
@@ -36,51 +43,67 @@ const PasswordReset = () => {
 
   // Handle password input change
   const handlePasswordChange = (e) => {
-    const { name, value } = e.target;
-    debouncedHandlePasswordChange({ ...passwords, [e.target.name]: e.target.value });
+    debouncedHandlePasswordChange({
+      ...passwords,
+      [e.target.name]: e.target.value,
+    });
   };
 
-   // Verifying email for password reset
+  // Verifying email for password reset
   const verifyEmail = async () => {
     try {
-      const response = await checkEmailExists({email});
+      const response = await checkEmailExists({ email });
       if (response.success && response.emailExists) {
         setEmailVerified(true);
       } else {
         if (response.error === "User not found") {
+          setEmailError(
+            "Email not found. Please enter a registered email address."
+          );
+        } else {
+          setEmailError("An error occurred. Please try again later.");
         }
-        setEmailError("Email not found. Please enter a valid email.");
       }
     } catch (error) {
       console.error("Error verifying email:", error);
-      setEmailError("An error occurred. Please try again later.");
+      setEmailError("Email not found. Please enter a valid email.");
     }
   };
 
   // Handle form submission for password reset
   const handleSubmit = async (e) => {
     e.preventDefault();
+
+     // Check if any field is empty
+  if (!email.trim() || !passwords.newPassword.trim() || !passwords.confirmNewPassword.trim()) {
+    setPasswordError("Please fill in all the fields.");
+    return;
+  }
     const { errors, isError } = passwordResetValidation(passwords);
-    setPasswordError("");
 
     if (isError) {
-      console.error("Validation error:", errors); 
+      setPasswordError(errors.newPassword || errors.confirmNewPassword);
       return;
     }
-    
+
     try {
-      const response = await passwordReset({ email, newPassword: passwords.newPassword });
+      const response = await passwordReset({
+        email,
+        newPassword: passwords.newPassword,
+      });
       if (response.success) {
-        localStorageService.set('token', response.token);
+        localStorageService.set("token", response.token);
         setPasswordChanged(true);
       } else {
-        setPasswordError(response.error || "An error occurred. Please try again later.");
+        setPasswordError(
+          response.error || "An error occurred. Please try again later."
+        );
       }
     } catch (error) {
       console.error("Error changing password:", error);
       setPasswordError("An error occurred. Please try again later.");
     }
-  }; 
+  };
 
   return (
     <Grid
@@ -112,7 +135,7 @@ const PasswordReset = () => {
                 value={email}
                 onChange={handleEmailChange}
                 error={!!emailError}
-                helperText={emailError}
+                helperText={emailError && <span className="error-message">{emailError}</span>}
               />
               <Button
                 variant="contained"
@@ -135,7 +158,7 @@ const PasswordReset = () => {
                 value={passwords.newPassword}
                 onChange={handlePasswordChange}
                 error={!!passwordError}
-                helperText={passwordError}
+                helperText={passwordError && <span className="error-message">{passwordError}</span>}
               />
               <TextField
                 name="confirmNewPassword"
@@ -147,7 +170,7 @@ const PasswordReset = () => {
                 value={passwords.confirmNewPassword}
                 onChange={handlePasswordChange}
                 error={!!passwordError}
-                helperText={passwordError}
+                helperText={passwordError && <span className="error-message">{passwordError}</span>}
               />
               <Button
                 variant="contained"

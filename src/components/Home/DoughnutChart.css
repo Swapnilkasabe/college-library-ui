@@ -1,0 +1,43 @@
+@import url("../../App.css");
+
+.chart-container {
+  padding: var(--spacing-md);
+  text-align: center;
+  border-radius: var(--spacing-sm)!important;
+  box-shadow: 0px .25rem .75rem rgba(0, 0, 0, 0.15)!important;
+  margin-top: var(--spacing-xl);
+  width: calc(var(--spacing-xl)*8);
+  background-color: #FFFFFF;
+  z-index: 1000;
+  transition: background-color 0.3s ease, box-shadow 0.3s ease, transform 0.3s ease;
+}
+
+.chart-container:hover {
+  box-shadow: 0 .25rem .5rem rgba(0, 0, 0, 0.2);
+  transform: translateY(-0.125rem) scale(1.02); 
+}
+
+.chart-container .chart-title {
+  font-weight: bold;
+  font-size: var(--font-size-md);
+  color: #333;
+  margin-bottom: var(--margin);
+  text-align: center;
+  transition: background-color 0.3s ease; 
+}
+
+.chart-container .custom-tooltip {
+  background-color: #fff;
+  border: .0625rem solid #ccc;
+  padding: var(--table-padding);
+  border-radius: var(--spacing-sm);
+}
+
+.chart-container .custom-tooltip .label {
+  color: #333;
+  font-weight: bold;
+}
+
+.chart-container:hover .chart-title {
+  background-color: #f0f5f9; 
+}

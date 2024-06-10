@@ -106,7 +106,9 @@ const Login = () => {
               value={formData.email}
               onChange={handleInputChange}
               error={!!formErrors.email}
-              helperText={formErrors.email}
+              helperText={formErrors.email && (
+                <span className="error-message">{formErrors.email}</span>
+              )}
               onFocus={handleFocus}
               onBlur={handleBlur}
             />
@@ -122,7 +124,9 @@ const Login = () => {
               value={formData.password}
               onChange={handleInputChange}
               error={!!formErrors.password}
-              helperText={formErrors.password}
+              helperText={formErrors.password && (
+                <span className="error-message">{formErrors.password}</span>
+              )}
               onFocus={handleFocus}
               onBlur={handleBlur}
             />
