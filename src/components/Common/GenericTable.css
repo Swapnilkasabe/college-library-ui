@@ -1,0 +1,44 @@
+@import url("../../App.css");
+.generic-table-container {
+  border-radius: var(--spacing-sm);
+  overflow: hidden;
+  margin-bottom: var(--spacing-md);
+  width: 100%;
+  min-width: calc(var(--spacing-xl)*22);
+  table-layout: auto;
+  font-family: Arial, sans-serif;
+  font-weight: normal;
+}
+
+.generic-table-container .table-container th {
+  background-color: rgba(24, 33, 62, 0.943);
+  color: #fff;
+  padding: var(--spacing-xs);
+  font-weight: bold;
+  text-align: center;
+  border-right: .0063rem solid #fff;
+  font-size: var(--table-heading-font);
+}
+.generic-table-container .table-container td {
+  text-align: center;
+  padding: var(--spacing-xs);
+  font-size: var(--table-data-font);
+  }
+
+.generic-table-container .truncate-text {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: calc(var(--spacing-xl)*5); 
+  display: inline-block;
+  vertical-align: middle;
+}
+
+.generic-table-container .actions-header {
+  text-align: right;
+  padding-right: calc(var(--spacing-md)); 
+}
+
+.generic-table-container tbody tr:nth-child(even) {
+  background-color: #f2f2f2;
+}

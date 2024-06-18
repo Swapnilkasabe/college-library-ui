@@ -1,0 +1,85 @@
+@import url('../../../App.css');
+
+.signup-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+  background-color: #f5f5f5;
+}
+
+.signup-paper {
+  width: calc(var(--spacing-xl)*10); 
+  padding: calc(var(--spacing-xl)*1.5);
+  background-color: white; 
+  box-shadow: 0px .25rem .5rem rgba(0, 0, 0, 0.1); 
+  border-radius: var(--spacing-sm); 
+}
+
+.signup-title {
+  margin-bottom: var(--spacing-lg); 
+  font-size: var(--heading-font-size); 
+  text-align: center;
+}
+
+.signup-field {
+  width: 100%;
+  margin-bottom: var(--spacing-md); 
+}
+
+.signup-form .submit-button {
+  background-color:var(--signup-login-btn);
+  color: var(--primary-button-text-color); 
+  margin-top: var(--spacing-md);
+  font-size: var(--button-font-size); 
+  border: none; 
+  border-radius: var(--spacing-xs);
+  transition: background-color 0.3s ease;
+}
+
+.signup-form .submit-button:hover {
+  background-color: rgb(47, 47, 187)} 
+
+.signup-form .toggle-link {
+  margin-top: var(--spacing-sm); 
+  font-size: var(--body-font-size);
+  text-align: center;
+  text-decoration: none;
+  
+  border: none; 
+}
+
+.login-link{
+  cursor: pointer;
+  color: #1470cb;
+  transition: color 0.3s ease, text-decoration 0.3s ease;
+}
+
+.login-link:hover{
+  color: #004ba0; 
+  text-decoration: underline;}
+
+  .success-message {
+    margin-bottom: var(--spacing-lg); 
+    text-align: center; 
+  }
+
+  .success-message .login-button {
+    margin-top: ar(--spacing-lg); 
+  }
+  .success-message .login-button:hover {
+    background-color: #388e3c; 
+  }
+
+  .error-message {
+    position: absolute;
+    bottom: -1.25rem;
+    left: 0;
+    color: red;
+    font-size: var(--font-size-sm);
+  }
+
+
+
+
+

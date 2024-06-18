@@ -1,0 +1,102 @@
+@import url("../App.css");
+
+/* Student & Book Page Styles */
+.form-container {
+  margin: var(--spacing-xs);
+  padding: var(--spacing-xs);
+  width: 100%;
+  max-width: 56.25rem;
+  margin-bottom: var(--spacing-md);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.form-container .heading {
+  font-size: var(--font-size-lg);
+  font-weight: bold;
+  margin-bottom: var(--spacing-sm);
+  text-align: center;
+}
+
+.form-container .button-container {
+  margin-bottom: var(--spacing-xs);
+  display: flex;
+  justify-content: flex-end;
+  width: 100%;
+  margin-right: var(--spacing-sm);
+}
+
+.form-container .button-container > button {
+  padding: var(--spacing-xs);
+  font-size: var(--font-size-sm);
+  font-weight: bold;
+}
+
+.table-container .editIcon,
+.table-container .deleteIcon {
+  font-size: var(--font-size-md);
+}
+
+.table-container .editIcon {
+  color: var(--edit-icon-color);
+}
+
+.table-container .deleteIcon {
+  color: var(--delete-icon-color);
+}
+
+/* Book Lending-Pages */
+
+.page-container {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  margin-top: var(--spacing-xs);
+  padding-left: var(--spacing-sm);
+  gap: var(--spacing-xs);
+}
+
+.page-form-container {
+  margin-top: var(--spacing-xs);
+  padding-left: var(--spacing-sm);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.autocomplete{
+width: calc(var(--spacing-xl)*7);
+margin: var(--spacing-md);
+}
+
+.MuiAutocomplete-option {
+  padding: .5rem .75rem;
+  font-size: var( --font-size-sm);
+  cursor: pointer;
+}
+
+.no-option-selected-message{
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin-top: calc(var(--spacing-lg)*2);
+}
+
+.no-option-selected-message .MuiSvgIcon-root{
+  color: #666;
+  font-size: var(--spacing-xl);
+  margin-bottom: var(--margin);
+
+}
+
+.page-container .issue-book-button {
+  position: absolute;
+  top: var(--spacing-sm);
+  right: var(--spacing-sm);
+  font-size: var(--font-size-sm);
+  font-weight: bold;
+  padding: var(--spacing-xs) var(--spacing-sm); 
+  white-space: nowrap; 
+  transition: background-color 0.3s ease;
+}

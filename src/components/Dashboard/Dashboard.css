@@ -1,0 +1,122 @@
+@import url("../../App.css");
+
+.dashboard {
+  display: grid;
+  place-items: center;
+  height: 100vh;
+  position: relative;
+  padding-top: var(--spacing-xl);
+}
+
+.dashboard-card {
+  font-family: var(--font-family);
+  width: 98%; 
+  height: 90%; 
+  margin: auto; 
+  display: flex;
+  position: fixed;
+  top: calc(50% + 2rem); 
+  left: 50%;
+  transform: translate(-50%, -50%);
+  background-color: #fefaf5;
+  border-radius: var(--spacing-md);
+  box-shadow: 0px 3px 5px -1px rgba(0, 0, 0, 0.2),
+    0px 6px 10px 0px rgba(0, 0, 0, 0.14), 0px 1px 18px 0px rgba(0, 0, 0, 0.12);
+}
+
+/* Sidebar */
+
+.dashboard-card .dashboard-options {
+  background-color: rgb(24, 33, 62);
+  color: wheat;
+  width:calc(var(--spacing-md)*13.75);
+  z-index: 2;
+  border-top-left-radius: var(--spacing-md);
+  border-bottom-left-radius: var(--spacing-md);
+  transition: transform 0.3s ease-in-out;
+}
+
+.dashboard-options.closed {
+  transform: translateX(-100%);
+  visibility: hidden;
+}
+
+.sidebar-toggler svg {
+  color: wheat;
+}
+
+.sidebar-toggler {
+  position: absolute;
+  top: 0%;
+  left: 0%;
+  height: var(--spacing-sm);
+  width: var(--spacing-sm);
+  z-index: 100;
+}
+
+.sidebar-content.open {
+  transform: translateX(0);
+}
+
+.dashboard-card .dashboard-logo {
+  margin: calc(var(--spacing-md)*3) 0;
+  color: rgb(234, 68, 74);
+  text-align: center;
+}
+.dashboard-logo .MuiSvgIcon-root {
+  width: calc(var(--spacing-md)*3); 
+  height: calc(var(--spacing-md)*3); 
+}
+
+.dashboard-card .dashboard-option {
+  text-decoration: none;
+  padding: 0.0625rem;
+  border-bottom: 0.0313rem solid salmon;
+  border-top: 0.0625rem solid rgb(234, 68, 74, 0.5);
+  color: #ffff;
+  font-size: var(--font-size-md);
+  text-align: left;
+  display: flex;
+  align-items: center;
+  cursor: pointer;
+}
+
+.sidebar-link {
+  text-decoration: none;
+}
+
+.dashboard-option:hover,
+.dashboard-option.clicked {
+  color: rgb(234, 68, 74);
+  border-left: 0.3125rem solid rgb(234, 68, 74);
+  transition: all 0.5s ease;
+  background-color: #ddd;
+}
+
+/* Content of each option in Sidebar */
+
+.dashboard-card .dashboard-option-icon {
+  margin-left: var(--spacing-md);
+  margin-right: var(--spacing-md);
+  font-size: var(--font-size-md);
+}
+
+.book-lending-submenu {
+  display: none;
+}
+
+.book-lending-option:hover .book-lending-submenu {
+  display: block;
+}
+
+.book-lending-submenu p {
+  padding: var(--spacing-sm);
+}
+
+.sidebar-logout {
+  position: absolute;
+  width: 100%;
+  text-align: center;
+}
+
+

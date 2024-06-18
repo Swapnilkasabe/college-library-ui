@@ -1,0 +1,32 @@
+@import url("../../App.css");
+.pagination-container {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-top: var(--margin);
+  font-family: Arial, sans-serif;
+}
+
+.pagination-container .pagination-left {
+  display: flex;
+  align-items: center;
+}
+
+.pagination-container .pagination-right {
+  display: flex;
+  align-items: center;
+}
+
+.pagination-container .pagination-info {
+  margin-right: var(--spacing-xs);
+  font-size: var(--table-heading-font);
+}
+
+.pagination-container .rows-per-page-button {
+  font-size: var(--button-font-size); 
+}
+
+
+.pagination-container .MuiSvgIcon-root{
+  font-size: var(--body-font-size);
+}

@@ -1,0 +1,60 @@
+@import url("../../App.css");
+
+.student-page-container,
+.book-page-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin-top: var(--spacing-xs);
+  padding-left: var(--spacing-sm);
+}
+
+.student-form-container,
+.book-form-container {
+  margin-top: var(--spacing-sm);
+  padding-left: var(--spacing-sm);
+  display: flex;
+  align-items: center;
+}
+
+.select-book-text,
+.select-student-text {
+  margin-right: var(--spacing-sm);
+}
+
+.dropdown-select {
+  width: var(--form-element-width);
+  height: var(--form-element-height);
+  margin-left: var(--spacing-sm);
+} 
+.dropdown-item {
+  font-size: var(--font-size-md) !important;
+}
+
+.student-table-container,
+.book-table-container {
+  margin-top: var(--spacing-xs);
+  margin-bottom: var(--spacing-sm);
+  width: calc(100% - var(--spacing-xs));
+}
+
+.student-table-container table,
+.book-table-container table {
+  width: 100%;
+}
+
+.student-table-container table thead,
+.book-table-container table thead {
+  background-color: var(--table-header-bg);
+  z-index: 1;
+}
+
+.student-table-container table thead th,
+.book-table-container table thead th {
+  padding: var(--spacing-xs);
+  color: var(--table-header-text-color);
+}
+
+.book-table-container .MuiTypography-root {
+  margin-bottom: var(--spacing-sm);
+}

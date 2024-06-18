@@ -1,0 +1,110 @@
+@import url("../../App.css");
+
+.modal-content {
+  background-color: #fff;
+  border-radius: var(--spacing-sm);
+  padding: var(--spacing-lg);
+  width: 80%;
+  max-width: calc(var(--spacing-xl) * 10);
+  position: relative;
+  min-height: calc(var(--spacing-xl) * 9);
+  margin: 10vh auto;
+  box-shadow: 0 var(--spacing-xs) var(--spacing-sm) rgba(0, 0, 0, 0.1);
+}
+
+.issuance-modal {
+  width: 100%;
+  max-width: calc(var(--spacing-xl) * 10);
+  min-height: calc(var(--spacing-xl) * 7);
+  padding: var(--spacing-md);
+  margin: 20vh auto;
+  box-shadow: 0 var(--spacing-xs) var(--spacing-sm) rgba(0, 0, 0, 0.1);
+}
+
+.issuance-modal .dropdown-select {
+  height: var(--spacing-xl);
+}
+
+.modal-error {
+  position: absolute;
+  bottom: -1.25rem;
+  left: 0;
+  color: red;
+  font-size: var(--font-size-sm);
+}
+
+.modal-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: var(--spacing-lg);
+}
+
+.modal-buttons {
+  display: flex;
+  justify-content: flex-end;
+  gap: var(--spacing-lg);
+  margin-top: var(--spacing-lg);
+}
+
+.modal-content .input-field {
+  width: 100%;
+  margin-bottom: var(--spacing-sm);
+  font-size: var(--font-size-sm);
+}
+
+.modal-content .input-field:focus {
+  outline: none;
+  box-shadow: 0 0 0 0.1rem rgba(0, 123, 255, 0.25);
+}
+
+.modal-buttons > button:first-child {
+  padding: var(--spacing-xs) var(--spacing-sm);
+  font-size: var(--font-size-sm);
+  border: none;
+  border-radius: --spacing-xs;
+  background-color: transparent;
+  color: rgb(76, 175, 80);
+}
+
+.modal-buttons > button:last-child {
+  padding: var(--spacing-xs) var(--spacing-sm);
+  font-size: var(--font-size-sm);
+  border: none;
+  border-radius: var(--spacing-xs);
+  cursor: pointer;
+  background-color: transparent;
+  color: rgb(234, 68, 74);
+}
+
+.modal-form {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-md);
+  min-height: calc(var(--spacing-md) * 12.5);
+}
+
+.modal-header .close-icon {
+  padding: 0;
+}
+
+.selected-item-details {
+  margin-top: var(--spacing-sm);
+  padding: var(--spacing-sm);
+  border: .0625rem solid #e0e0e0;
+  border-radius: var(--spacing-xs);
+  background-color: #f9f9f9;
+}
+
+.selected-item-details .MuiTypography-body2 {
+  margin-bottom: var(--spacing-xs);
+}
+
+.selected-item-details .MuiTypography-h6 {
+  font-size: var(--font-size-md);
+  margin-bottom: var(--spacing-xs);
+}
+
+.selected-item-details .MuiTypography-body2 {
+  font-size: 0.8rem; 
+}
