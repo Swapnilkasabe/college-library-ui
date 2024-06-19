@@ -58,11 +58,14 @@ const Login = () => {
         notificationHandler(true, "Logged in successfully", "success");
         navigate("/", {replace: true} );
       } else {
+        notificationHandler(true, response?.error, "error");
         setLoginError(response.error || "Incorrect email or password."); 
       }
     } catch (error) {
       console.error("Login failed:", error.message);
       setLoginError("An error occurred. Please try again.");
+      notificationHandler(true, error?.message, "error");
+
     }
   }; 
 

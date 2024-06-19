@@ -10,6 +10,7 @@ import { useNavigate } from "react-router-dom";
 import { signupValidation } from "../../../utilities/formValidation";
 import { userSignup } from "../../../services/user.service";
 import "./Signup.css";
+import { useAppContext } from "../../../contexts/AppContext.Provider";
 
 
 const Signup = () => {
@@ -21,6 +22,8 @@ const Signup = () => {
   });
   const [formErrors, setFormErrors] = useState({});
   const [registrationSuccess, setRegistrationSuccess] = useState(false);
+   // Access state from context for displaying notification
+   const { notificationHandler } = useAppContext();
 
   const navigate = useNavigate();
 // Toggle between signup and login
@@ -40,12 +43,15 @@ const Signup = () => {
     try {
       const response = await userSignup(formData);
       if (response.success) {
+        notificationHandler(true, response?.message, "success");
         setRegistrationSuccess(true);
       } else {
+        notificationHandler(true, response?.error, "error");
         setFormErrors(response.error);
       }
     } catch (error) {
       console.error("Signup failed:", error.message);
+      notificationHandler(true, error?.message, "error");
       setFormErrors("An error occurred. Please try again.");
     }
   };
