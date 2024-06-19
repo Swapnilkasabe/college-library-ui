@@ -58,6 +58,9 @@ const StudentModal = ({ isOpen, onClose, onAdd, initialStudentData }) => {
 
   const modeTitle = isEditMode ? "Update" : "Add";
 
+  const hasChanges =
+    JSON.stringify(studentData) !== JSON.stringify(initialStudentData);
+
   return (
     <Modal open={isOpen} onClose={onCloseHandle}>
       <Box className="modal-content">
@@ -130,7 +133,12 @@ const StudentModal = ({ isOpen, onClose, onAdd, initialStudentData }) => {
             />
           </Box>
           <Box className="modal-buttons">
-            <Button variant="contained" color="primary" onClick={handleAdd}>
+            <Button
+              variant="contained"
+              color="primary"
+              onClick={handleAdd}
+              disabled={!hasChanges}
+            >
               {modeTitle} Student
             </Button>
             <Button

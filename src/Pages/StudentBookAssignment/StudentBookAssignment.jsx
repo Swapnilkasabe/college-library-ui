@@ -10,7 +10,7 @@ import {
 import {
   Autorenew as AutorenewIcon,
   KeyboardReturn as KeyboardReturnIcon,
-  Person as PersonIcon
+  Person as PersonIcon,
 } from "@mui/icons-material";
 import GenericTable from "../../components/Common/GenericTable";
 import CardItem from "../../components/Common/CardItem";
@@ -24,10 +24,7 @@ import {
   updateReturnedDate,
 } from "../../services/bookTransaction.service";
 import { useAppContext } from "../../contexts/AppContext.Provider";
-import { getBookById } from "../../services/book.service";
 import "../../commonStyles/Pages.css";
-
-
 
 const StudentBookAssignment = () => {
   // State for storing student data
@@ -44,17 +41,21 @@ const StudentBookAssignment = () => {
   const [selectedBook, setSelectedBook] = useState(null);
   // State for managing the name of the selected student
   const [selectedStudentName, setSelectedStudentName] = useState("");
+
+  const [issuedBooksCount, setIssuedBooksCount] = useState(0);
+
   // State for managing book details for the modal
   const [bookDetails, setBookDetails] = useState(null);
+  
   // State for managing the modal mode (renew/return)
   const [modalMode, setModalMode] = useState(null);
-    // State for managing the current page number
-  const [currentPage, setCurrentPage] = useState(1);
-    // State for managing the number of rows per page
-  const [rowsPerPage, setRowsPerPage] = useState(5);
-    // State for managing the total number of pages
-  const [totalPages, setTotalPages] = useState(0);
-    // Accessing the notification handler to display notifications
+
+  const [paginationState, setPaginationState] = useState({
+    total: 0,
+    page: 0,
+    rowsPerPage: 2,
+  });
+  // Accessing the notification handler to display notifications
   const { notificationHandler } = useAppContext();
 
   //Effect to fetch students on component mount
@@ -65,9 +66,13 @@ const StudentBookAssignment = () => {
   //Effect to fetch issued books on component mount
   useEffect(() => {
     if (selectedStudent) {
-      fetchIssuedBooks(selectedStudent._id);
+      fetchIssuedBooks(
+        selectedStudent._id,
+        paginationState.page,
+        paginationState.rowsPerPage
+      );
     }
-  }, [selectedStudent, currentPage, rowsPerPage]);
+  }, [selectedStudent, paginationState.page, paginationState.rowsPerPage]);
 
   // Function to fetch students
   const fetchStudents = async () => {
@@ -80,58 +85,59 @@ const StudentBookAssignment = () => {
     }
   };
 
-    // Function to fetch issued books
-    const fetchIssuedBooks = async (studentId) => {
+  // Function to fetch issued books
+  const fetchIssuedBooks = async (studentId) => {
     if (!studentId) return;
-
+  
     try {
-      const { transactions, total } = await getTransactionByStudentId(
-        studentId,
-        currentPage,
-        rowsPerPage
-      );
-      setIssuedBooks(transactions);
-      setTotalPages(total);
+      const response = await getTransactionByStudentId(studentId);
+      if (response && response.books && response.books.length > 0) {
+        const { books: transactions, total: issuedBooksCount } = response;
+        
+        setIssuedBooks(transactions);
+        setIssuedBooksCount(issuedBooksCount);
+        setPaginationState((prevState) => ({
+          ...prevState,
+          total: issuedBooksCount,
+        }));
+      } else {
+        setIssuedBooks([]);
+        setIssuedBooksCount(0);
+      }
     } catch (error) {
       notificationHandler(true, "Error fetching issued books", "error");
       console.error("Error fetching issued books:", error);
+      setIssuedBooks([]);
+      setIssuedBooksCount(0);
     }
   };
-  // Function to handle page change
-  const handlePageChange = (newPage) => {
-    setCurrentPage(newPage);
-  };
-
-  // Function to handle rows per page change
-  const handleRowsPerPageChange = (newRowsPerPage) => {
-    setRowsPerPage(newRowsPerPage);
-    setCurrentPage(1);
-  };
-
+  
 
   // Function to handle onChange event
   const handleStudentChange = (event, newValue) => {
     setSelectedStudent(newValue);
     setSelectedStudentName(newValue ? newValue.name : "");
-    if (newValue) {
-      fetchIssuedBooks(newValue._id);
-    }
   };
 
-  // Function to handle renewing a book
-  const handleRenew = async (book) => {
+  const handleRenew = (book) => {
     setSelectedBook(book);
-    const details = await getBookById(book.bookId);
-    setBookDetails(details);
+    setBookDetails({
+      title: book.bookId?.title,
+      author: book.bookId?.author,
+      dueDate: book.dueDate,
+    });
     setModalMode("renew");
     setOpenRenewReturnModal(true);
   };
 
-  // Function to handle returning a book
-  const handleReturn = async (book) => {
+  const handleReturn = (book) => {
     setSelectedBook(book);
-    const details = await getBookById(book.bookId);
-    setBookDetails(details);
+    setBookDetails({
+      title: book.bookId?.title,
+      author: book.bookId?.author,
+      dueDate: book.dueDate,
+    });
+    console.log("book details from parent 1", setBookDetails);
     setModalMode("return");
     setOpenRenewReturnModal(true);
   };
@@ -144,20 +150,35 @@ const StudentBookAssignment = () => {
   // Function to close the Renew/Return modal and refresh issued books list
   const handleCloseRenewReturnModal = () => {
     setOpenRenewReturnModal(false);
-    fetchIssuedBooks();
+    fetchIssuedBooks(
+      selectedStudent._id,
+      paginationState.page,
+      paginationState.rowsPerPage
+    );
   };
 
   // Function to close the Issuance modal and refresh issued books list
   const handleCloseIssuanceModal = () => {
     setOpenIssuanceModal(false);
-    fetchIssuedBooks();
+    if (selectedStudent) {
+      fetchIssuedBooks(
+        selectedStudent._id,
+        paginationState.page,
+        paginationState.rowsPerPage
+      );
+    }
   };
 
   // Function to handle renewing a book for the selected student
   const handleRenewBook = async () => {
+    if (selectedBook.renewalCount >= 2) {
+      notificationHandler(true, "Cannot renew book, renewal limit reached", "warning");
+      return; 
+    }
     try {
       await createRenewal(selectedBook._id);
       handleCloseRenewReturnModal();
+      notificationHandler(true, "Book renewed successfully", "success");
     } catch (error) {
       notificationHandler(true, "Error renewing book", "error");
       console.error("Error renewing book:", error);
@@ -167,12 +188,13 @@ const StudentBookAssignment = () => {
   // Function to handle returning a book for the selected student
   const handleReturnBook = async () => {
     try {
-      const response = await updateReturnedDate(selectedBook._id);
-      const updatedBooks = issuedBooks.filter((book) => book._id !== selectedBook._id);
+      await updateReturnedDate(selectedBook._id);
+      const updatedBooks = issuedBooks.filter(
+        (book) => book._id !== selectedBook._id
+      );
+      console.log("updatedBooks", updatedBooks);
       setIssuedBooks(updatedBooks);
       setOpenRenewReturnModal(false);
-
-      handleCloseRenewReturnModal();
       notificationHandler(true, "Book returned successfully", "success");
     } catch (error) {
       notificationHandler(true, "Error returning book", "error");
@@ -186,7 +208,6 @@ const StudentBookAssignment = () => {
     { key: "email", label: "Email" },
     { key: "phoneNumber", label: "Phone Number" },
   ];
-
 
   // Define table columns
   const bookColumns = [
@@ -215,11 +236,14 @@ const StudentBookAssignment = () => {
       nestedKeyDelimeter: "$",
     },
     { key: "status", label: "Status" },
+    { 
+      key: "dueDate",
+      label: "Due Date",
+    },
   ];
 
-
-// Define table actions with custom icons
-const actions = [
+  // Define table actions with custom icons
+  const actions = [
     {
       label: "Renew",
       handler: handleRenew,
@@ -234,6 +258,23 @@ const actions = [
     },
   ];
 
+ const handlePageChange = (newPage, rowsPerPage) => {
+  const maxPage = Math.ceil(issuedBooksCount / rowsPerPage) - 1;
+  const validNewPage = Math.min(newPage, maxPage);
+  setPaginationState((prevState) => ({
+    ...prevState,
+    page: validNewPage,
+  }));
+};
+
+const handleRowsPerPageChange = (newRowsPerPage) => {
+  setPaginationState((prevState) => ({
+    ...prevState,
+    rowsPerPage: newRowsPerPage,
+    page: 0,
+  }));
+};
+
   return (
     <Box className="page-container">
       <Box className="page-form-container">
@@ -244,11 +285,17 @@ const actions = [
           getOptionLabel={(option) => option.name}
           filterOptions={(options, { inputValue }) =>
             options.filter((option) =>
-              option.name?.toLowerCase().includes(inputValue.toLowerCase())
+              option.name.toLowerCase().includes(inputValue.toLowerCase())
             )
           }
           renderInput={(params) => (
-            <TextField {...params} label="Select Student" variant="outlined" size="small" className="autocomplete-input" />
+            <TextField
+              {...params}
+              label="Select Student"
+              variant="outlined"
+              size="small"
+              className="autocomplete-input"
+            />
           )}
           className="autocomplete"
         />
@@ -261,11 +308,10 @@ const actions = [
             image="Assets/user.png"
           >
             <Tooltip title="Click to issue a new book" arrow>
-             
-            <Button
+              <Button
                 variant="outlined"
                 startIcon={<AddIconButton />}
-                onClick={handleIssueBookClick} 
+                onClick={handleIssueBookClick}
                 className="issue-book-button"
               >
                 Issue Book
@@ -278,9 +324,9 @@ const actions = [
                 data={issuedBooks}
                 columns={bookColumns}
                 actions={actions}
-                page={currentPage}
-                total={totalPages}
-                limit={rowsPerPage}
+                total={paginationState.total}
+                page={paginationState.page}
+                rowsPerPage={paginationState.rowsPerPage}
                 onPageChange={handlePageChange}
                 onRowsPerPageChange={handleRowsPerPageChange}
               />
@@ -301,7 +347,9 @@ const actions = [
           onClose={handleCloseRenewReturnModal}
           onAction={modalMode === "renew" ? handleRenewBook : handleReturnBook}
           actionType={modalMode}
+          bookDetails={bookDetails}
         />
+        
       )}
       {openIssuanceModal && (
         <BookIssuanceModal
@@ -310,7 +358,13 @@ const actions = [
           mode="issueBook"
           selectedBook={selectedBook}
           selectedStudent={selectedStudent}
-          onBookIssued={fetchIssuedBooks}
+          onBookIssued={() =>
+            fetchIssuedBooks(
+              selectedStudent._id,
+              paginationState.page,
+              paginationState.rowsPerPage
+            )
+          }
           selectedStudentName={selectedStudentName}
         />
       )}

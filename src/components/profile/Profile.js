@@ -96,17 +96,10 @@ const Profile = () => {
           </Typography>
           <Button
             variant="contained"
-            className="profile-button edit-button"
-            onClick={handleEditProfile}
-          >
-            Edit Profile
-          </Button>
-          <Button
-            variant="contained"
             className="profile-button back-button"
             onClick={handleBack}
           >
-            Back
+            Dashboard
           </Button>
         </Paper>
       </Grid>

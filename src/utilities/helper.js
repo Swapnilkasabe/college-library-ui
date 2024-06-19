@@ -14,3 +14,17 @@ export const getToken = (isAuthRequire = true) => {
         ...HEADERS,
       };
 };
+
+export const formatDate = (dateString) => {
+  try {
+    const dateObject = new Date(dateString);
+
+    return dateObject.toLocaleDateString("en-IN", {
+      year: "numeric",
+      month: "2-digit",
+      day: "2-digit",
+    });
+  } catch (error) {
+    return "Invalid Date";
+  }
+};

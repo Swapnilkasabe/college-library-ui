@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect } from "react";
 import {
   Button,
   Paper,
@@ -8,42 +8,49 @@ import {
   TableContainer,
   TableHead,
   TableRow,
-  Grid,
   Tooltip,
   Typography,
+  TablePagination,
 } from "@mui/material";
-import Pagination from "./Pagination";
 import PropTypes from "prop-types";
+import { formatDate } from "../../utilities/helper";
 import "./GenericTable.css";
 
-// Reusable component for displaying tabular data with customizable columns and actions
 const GenericTable = ({
-  data,
+  data = [],
   columns,
   actions,
-  limit,
-  page,
+  total,
   onPageChange,
+  onRowsPerPageChange,
+  page,
+  rowsPerPage,
 }) => {
-  // State for managing current page for pagination
-  const [rowsPerPage, setRowsPerPage] = useState(limit);
-
-  const handleRowsPerPageChange = (newLimit) => {
-    setRowsPerPage(newLimit);
-    onPageChange(1);
+  const handleChangePage = (event, newPage) => {
+    onPageChange(newPage, rowsPerPage);
   };
 
-  // Calculating start and end index of items to display based on current page
-  const startIndex = (page - 1) * rowsPerPage;
-  const endIndex = startIndex + rowsPerPage;
+  const handleChangeRowsPerPage = (event) => {
+    const newRowsPerPage = parseInt(event.target.value, 10);
+    onRowsPerPageChange(newRowsPerPage);
+  };
 
-  // Slice the data array based on start and end index
-  const slicedData = data ? data.slice(startIndex, endIndex) : [];
+  const displayedData = data.slice(
+    page * rowsPerPage,
+    Math.min((page + 1) * rowsPerPage, total)
+  );
 
   return (
-    <Grid item xs={12}>
-      <TableContainer component={Paper} className="generic-table-container">
-        <Table aria-label="simple table" className="table-container">
+    <Paper sx={{ width: "100%", overflow: "hidden" }}>
+      <TableContainer
+        sx={{ maxHeight: 440 }}
+        className="generic-table-container"
+      >
+        <Table
+          stickyHeader
+          aria-label="sticky table"
+          className="table-container"
+        >
           <TableHead>
             <TableRow>
               {/* Mapping over columns to render table headers */}
@@ -52,7 +59,7 @@ const GenericTable = ({
                   {column.label}
                 </TableCell>
               ))}
-              {/* Actions column header */}
+              {/* Action column header */}
               {actions && (
                 <TableCell className="table-header actions-header">
                   Actions
@@ -61,40 +68,38 @@ const GenericTable = ({
             </TableRow>
           </TableHead>
           <TableBody>
-            {data && data.length > 0 ? (
-              // Mapping over slicedData to render table rows
-              slicedData.map((row) => (
-                <TableRow key={row._id}>
-                  {" "}
+            {/* Mapping over displayedData to render table rows */}
+            {displayedData && displayedData.length > 0 ? (
+              displayedData.map((row) => (
+                <TableRow hover role="checkbox" tabIndex={-1} key={row._id}>
                   {/* Mapping over columns to render table cells */}
-                  {columns.map((column) => (
-                    <TableCell key={column.key}>
-                      {/* Tooltip for truncated text */}
-                      <Tooltip
-                        title={
-                          column.isNestedKey
-                            ? row[column.key.split("$")[0]][
-                                column.key.split("$")[1]
-                              ]
-                            : row[column.key]
-                        }
-                        arrow
-                      >
-                        {/* Truncated text */}
-                        <span className="truncate-text">
-                          {column.isNestedKey
-                            ? row[column.key.split("$")[0]][
-                                column.key.split("$")[1]
-                              ]
-                            : row[column.key]}
-                        </span>
-                      </Tooltip>
-                    </TableCell>
-                  ))}
+                  {columns.map((column) => {
+                    const value = column.isNestedKey
+                      ? row[column.key.split("$")[0]][column.key.split("$")[1]]
+                      : row[column.key];
+                    let displayValue = value;
+                    if (column.key === "dueDate") {
+                      {
+                        displayValue = formatDate(value);
+                      }
+                    }
+
+                    return (
+                      <TableCell key={column.key}>
+                        <Tooltip title={displayValue} arrow>
+                          {/* Truncated text */}
+                          <span className="truncate-text">
+                            {column.format && typeof displayValue === "string"
+                              ? column.format(displayValue)
+                              : displayValue}
+                          </span>
+                        </Tooltip>
+                      </TableCell>
+                    );
+                  })}
                   {/* Actions column */}
                   {actions && (
                     <TableCell className="actions-cell">
-                      {/* Mapping over actions to render action buttons */}
                       {actions.map((action, index) => (
                         <Tooltip key={`action-${index}`} title={action.tooltip}>
                           <Button onClick={() => action.handler(row)}>
@@ -113,7 +118,7 @@ const GenericTable = ({
                   colSpan={columns.length + (actions ? 1 : 0)}
                   className="no-data-cell"
                 >
-                  <Typography variant="body3" style={{ textAlign: "center" }}>
+                  <Typography variant="body2" style={{ textAlign: "center" }}>
                     No data available
                   </Typography>
                 </TableCell>
@@ -122,18 +127,19 @@ const GenericTable = ({
           </TableBody>
         </Table>
       </TableContainer>
-      {/* Pagination */}
-      <Pagination
-        page={page}
-        onPageChange={onPageChange}
+      <TablePagination
+        rowsPerPageOptions={[2, 4]}
+        component="div"
+        count={total}
         rowsPerPage={rowsPerPage}
-        onRowsPerPageChange={handleRowsPerPageChange}
+        page={page}
+        onPageChange={handleChangePage}
+        onRowsPerPageChange={handleChangeRowsPerPage}
       />
-    </Grid>
+    </Paper>
   );
 };
 
-// Defining the types for the props
 GenericTable.propTypes = {
   data: PropTypes.arrayOf(PropTypes.object.isRequired),
   columns: PropTypes.arrayOf(
@@ -141,6 +147,7 @@ GenericTable.propTypes = {
       key: PropTypes.string.isRequired,
       label: PropTypes.string.isRequired,
       isNestedKey: PropTypes.bool,
+      format: PropTypes.func,
     })
   ).isRequired,
   actions: PropTypes.arrayOf(
@@ -150,9 +157,11 @@ GenericTable.propTypes = {
       handler: PropTypes.func.isRequired,
     })
   ),
-  limit: PropTypes.number.isRequired,
+  total: PropTypes.number.isRequired,
   page: PropTypes.number.isRequired,
+  rowsPerPage: PropTypes.number.isRequired,
   onPageChange: PropTypes.func.isRequired,
+  onRowsPerPageChange: PropTypes.func.isRequired,
 };
 
 export default GenericTable;

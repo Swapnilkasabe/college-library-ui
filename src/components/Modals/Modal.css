@@ -7,22 +7,9 @@
   width: 80%;
   max-width: calc(var(--spacing-xl) * 10);
   position: relative;
-  min-height: calc(var(--spacing-xl) * 9);
+  min-height: calc(var(--spacing-xl) * 5);
   margin: 10vh auto;
   box-shadow: 0 var(--spacing-xs) var(--spacing-sm) rgba(0, 0, 0, 0.1);
-}
-
-.issuance-modal {
-  width: 100%;
-  max-width: calc(var(--spacing-xl) * 10);
-  min-height: calc(var(--spacing-xl) * 7);
-  padding: var(--spacing-md);
-  margin: 20vh auto;
-  box-shadow: 0 var(--spacing-xs) var(--spacing-sm) rgba(0, 0, 0, 0.1);
-}
-
-.issuance-modal .dropdown-select {
-  height: var(--spacing-xl);
 }
 
 .modal-error {
@@ -98,6 +85,7 @@
 
 .selected-item-details .MuiTypography-body2 {
   margin-bottom: var(--spacing-xs);
+  font-size: 0.8rem; 
 }
 
 .selected-item-details .MuiTypography-h6 {
@@ -105,6 +93,15 @@
   margin-bottom: var(--spacing-xs);
 }
 
-.selected-item-details .MuiTypography-body2 {
-  font-size: 0.8rem; 
+.issuance-modal {
+  width: 100%;
+  max-width: calc(var(--spacing-xl) * 10);
+  min-height: calc(var(--spacing-xl) * 7);
+  padding: var(--spacing-md);
+  margin: 20vh auto;
+  box-shadow: 0 var(--spacing-xs) var(--spacing-sm) rgba(0, 0, 0, 0.1);
+}
+
+.issuance-modal .dropdown-select {
+  height: var(--spacing-xl);
 }

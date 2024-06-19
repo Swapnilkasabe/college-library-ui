@@ -3,6 +3,7 @@ import { Modal, Button, IconButton, Box, Typography } from "@mui/material";
 import CloseIcon from "@mui/icons-material/Close";
 import PropTypes from "prop-types";
 import "../Modals/Modal.css";
+import { formatDate } from "../../utilities/helper";
 
 const RenewReturnModal = ({
   isOpen,
@@ -11,7 +12,10 @@ const RenewReturnModal = ({
   actionType,
   bookDetails,
 }) => {
+  console.log("book details in renew return modal", bookDetails);
   if (!bookDetails) return null;
+
+  const { title, author, dueDate } = bookDetails;
 
   return (
     <Modal open={isOpen} onClose={onClose}>
@@ -24,15 +28,15 @@ const RenewReturnModal = ({
             <CloseIcon />
           </IconButton>
         </Box>
-        <Box className="modal-body">
-          <Typography variant="body1">
-            <strong>Title:</strong> {bookDetails.title || ""}
+        <Box className="selected-item-details">
+          <Typography variant="body2">
+            <strong>Title:</strong> {title || ""}
           </Typography>
-          <Typography variant="body1">
-            <strong>Author:</strong> {bookDetails.author || ""}
+          <Typography variant="body2">
+            <strong>Author:</strong> {author || ""}
           </Typography>
-          <Typography variant="body1">
-            <strong>Due Date:</strong> {bookDetails.dueDate || ""}
+          <Typography variant="body2">
+            <strong>Due Date:</strong> {formatDate(dueDate)}
           </Typography>
         </Box>
         <Box className="modal-buttons">
