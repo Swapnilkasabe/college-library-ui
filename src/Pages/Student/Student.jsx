@@ -1,100 +1,83 @@
-import React, { useEffect, useState } from "react";
-import {
-  Box,
-  Grid,
-  Typography,
-  Button,
-  Dialog,
-  DialogTitle,
-  DialogContent,
-  DialogActions,
-  Tooltip,
-} from "@mui/material";
+import React, { useState, useEffect } from "react";
+import { Grid, Typography, Button, Box, Tooltip, Dialog, DialogTitle, DialogContent, DialogActions } from "@mui/material";
 import StudentModal, { DefaultData } from "../../components/Modals/StudentModal";
 import GenericTable from "../../components/Common/GenericTable";
 import { isEmptyString } from "../../utilities/helper";
-import {
-  AddIconButton,
-  DeleteIconButton,
-  EditIconButton,
-} from "../../components/Icons/Icons";
-import {
-  studentCreationValidation,
-  studentUpdateValidation,
-} from "../../utilities/formValidation";
-import {
-  createStudent,
-  deleteStudent,
-  getAllStudents,
-  updateStudent,
-} from "../../services/student.service";
+import { AddIconButton, DeleteIconButton, EditIconButton } from "../../components/Icons/Icons";
+import { studentCreationValidation, studentUpdateValidation } from "../../utilities/formValidation";
+import { createStudent, deleteStudent, getAllStudents, updateStudent } from "../../services/student.service";
 import { useAppContext } from "../../contexts/AppContext.Provider";
 import "../../commonStyles/Pages.css";
 
 const Student = () => {
-  // State for storing student data
   const [students, setStudents] = useState([]);
-  // State for managing the currently edited student
   const [editingStudent, setEditingStudent] = useState(DefaultData);
-  // State for controlling the visibility of the add modal
   const [isModalOpen, setIsModalOpen] = useState(false);
-  // State for controlling the visibility of the delete confirmation dialog
   const [deleteConfirmationOpen, setDeleteConfirmationOpen] = useState(false);
-  // State for managing the delete student operation
   const [deletingStudent, setDeletingStudent] = useState(null);
-  // State for managing the total number of students
-  const [totalStudents, setTotalStudents] = useState(0);
-  // State for managing the current page number
-  const [currentPage, setCurrentPage] = useState(1);
-  // State for managing the number of rows per page
-  const [rowsPerPage, setRowsPerPage] = useState(5);
-  // State for managing the total number of pages
-  const [pageCount, setPageCount] = useState(0);
 
-  // Access state from context for displaying notification
   const { notificationHandler } = useAppContext();
 
-  // Function to fetch all students
-  const fetchStudents = async () => {
+  const [paginationState, setPaginationState] = useState({
+    total: 0,
+    page: 0,
+    rowsPerPage: 2,
+  });
+
+  const fetchStudents = async (page, rowsPerPage) => {
     try {
-      const { students, total } = await getAllStudents(currentPage, rowsPerPage);
+      const response = await getAllStudents(page, rowsPerPage);
+      const { students, totalStudentsCount } = response;
       setStudents(students);
-      setTotalStudents(total);
-      const calculatedPageCount = Math.ceil(total / rowsPerPage); 
-      setPageCount(calculatedPageCount); 
+      setPaginationState((prevState) => ({
+        ...prevState,
+        total:totalStudentsCount,
+      }));
     } catch (error) {
       console.error("Error fetching students", error);
       notificationHandler(true, "Error fetching students", "error");
     }
   };
 
-  // Function to open the openAddAndEditModal
+  useEffect(() => {
+
+    fetchStudents(paginationState.page, paginationState.rowsPerPage);
+  }, [paginationState.page, paginationState.rowsPerPage]);
+
   const openAddAndEditModal = (student) => {
     setIsModalOpen(true);
-    setEditingStudent(!isEmptyString(student?.studentId) ? student : DefaultData);
+    setEditingStudent(
+      !isEmptyString(student?.studentId) ? student : DefaultData
+    );
   };
 
-  // Function to close the add student modal
   const closeAddAndEditModal = () => {
     setIsModalOpen(false);
     setEditingStudent(DefaultData);
   };
 
-  // Function to add and update student
   const handleAddStudent = async (newStudent) => {
     try {
       let response;
       if (newStudent?._id) {
         const { errors, isError } = studentUpdateValidation(newStudent);
         if (isError) {
-          notificationHandler(true, "Validation error: " + JSON.stringify(errors), "error");
+          notificationHandler(
+            true,
+            "Validation error: " + JSON.stringify(errors),
+            "error"
+          );
           return;
         }
         response = await updateStudent(newStudent.studentId, newStudent);
       } else {
         const { errors, isError } = studentCreationValidation(newStudent);
         if (isError) {
-          notificationHandler(true, "Validation error: " + JSON.stringify(errors), "error");
+          notificationHandler(
+            true,
+            "Validation error: " + JSON.stringify(errors),
+            "error"
+          );
           return;
         }
         response = await createStudent(newStudent);
@@ -111,7 +94,7 @@ const Student = () => {
         : "Successfully added student";
       notificationHandler(true, successMessage, "success");
 
-      fetchStudents();
+      fetchStudents(paginationState.page, paginationState.rowsPerPage);
       closeAddAndEditModal();
     } catch (error) {
       console.error("Error adding/updating student", error);
@@ -119,17 +102,15 @@ const Student = () => {
     }
   };
 
-  // Function to delete a student
   const handleDeleteStudent = (student) => {
     setDeletingStudent(student.studentId);
     setDeleteConfirmationOpen(true);
   };
 
-  // Function for delete confirmation
   const confirmDelete = async () => {
     try {
       await deleteStudent(deletingStudent);
-      fetchStudents();
+      fetchStudents(paginationState.page, paginationState.rowsPerPage);
       notificationHandler(true, "Successfully deleted student", "success");
     } catch (error) {
       console.error("Error deleting student", error);
@@ -138,7 +119,6 @@ const Student = () => {
     setDeleteConfirmationOpen(false);
   };
 
-  // Define table columns
   const columns = [
     { key: "name", label: "Name" },
     { key: "studentId", label: "ID" },
@@ -146,7 +126,6 @@ const Student = () => {
     { key: "phoneNumber", label: "Phone" },
   ];
 
-  // Define table actions with custom icons
   const actions = [
     {
       handler: openAddAndEditModal,
@@ -160,24 +139,14 @@ const Student = () => {
     },
   ];
 
-  // Function to handle rows per page change
-  const handleRowsPerPageChange = (newRowsPerPage) => {
-    setRowsPerPage(newRowsPerPage);
-    setCurrentPage(1); 
-  };
-
-  // Function to handle page change
-  const handlePageChange = (newPage) => {
-    setCurrentPage(newPage);
-  };
-
-  useEffect(() => {
-    fetchStudents();
-  }, [currentPage, rowsPerPage]);
-
   return (
-    <Grid container direction="column" alignItems="center" className="form-container">
-      <Typography variant="h5" className="heading">
+    <Grid
+      container
+      direction="column"
+      alignItems="center"
+      className="form-container"
+    >
+      <Typography variant="h5" className="heading" >
         Student Page
       </Typography>
       <Box className="button-container">
@@ -192,39 +161,57 @@ const Student = () => {
         </Tooltip>
       </Box>
       <Box className="table-container">
-        <GenericTable
+      <GenericTable
           data={students}
           columns={columns}
           actions={actions}
-          total={totalStudents}
-          limit={rowsPerPage}
-          page={currentPage}
-          pageCount={pageCount}
-          onPageChange={handlePageChange}
-          onRowsPerPageChange={handleRowsPerPageChange}
+          total={paginationState.total}
+          page={paginationState.page}
+          rowsPerPage={paginationState.rowsPerPage}
+          onPageChange={(newPage, rowsPerPage) => {
+
+            setPaginationState((prevState) => ({
+              ...prevState,
+              page: newPage,
+              rowsPerPage,
+            }));
+          }}
+          onRowsPerPageChange={(newRowsPerPage) => {
+
+            setPaginationState({
+              ...paginationState,
+              rowsPerPage: newRowsPerPage,
+              page: 0, 
+            });
+          }}
+          
         />
       </Box>
-      {/* Student modal component  */}
       <StudentModal
         isOpen={isModalOpen}
         onClose={closeAddAndEditModal}
         onAdd={handleAddStudent}
-        initialStudentData={isEmptyString(editingStudent.studentId) ? DefaultData : editingStudent}
+        initialStudentData={
+          isEmptyString(editingStudent.studentId) ? DefaultData : editingStudent
+        }
       />
-      {/* Component for delete confirmation */}
-      <Dialog open={deleteConfirmationOpen} onClose={() => setDeleteConfirmationOpen(false)}>
+      <Dialog
+        open={deleteConfirmationOpen}
+        onClose={() => setDeleteConfirmationOpen(false)}
+      >
         <DialogTitle>Delete Student</DialogTitle>
         <DialogContent>Are you sure you want to delete?</DialogContent>
         <DialogActions>
           <Button onClick={confirmDelete} color="error">
             Delete
           </Button>
-          <Button onClick={() => setDeleteConfirmationOpen(false)}>Cancel</Button>
+          <Button onClick={() => setDeleteConfirmationOpen(false)}>
+            Cancel
+          </Button>
         </DialogActions>
       </Dialog>
     </Grid>
   );
-  };
-  
-  export default Student;
-  
+};
+
+export default Student;

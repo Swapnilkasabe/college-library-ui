@@ -38,36 +38,38 @@ const BookStudentAssignment = () => {
   // State for managing students with issued books
   const [issuedStudents, setIssuedStudents] = useState([]);
   // State for managing the selected student
-
   const [selectedStudent, setSelectedStudent] = useState(null);
+  
+  const [assignedBorrowersCount, setAssignedBorrowersCount] = useState(0);
   // State for managing the title of the selected book
-
   const [selectedBookTitle, setSelectedBookTitle] = useState("");
+  const [bookDetails, setBookDetails] = useState(null);
   // State for managing the mode of the modal
-
   const [modalMode, setModalMode] = useState(null);
-  // State for managing the current page number
 
-  const [currentPage, setCurrentPage] = useState(1);
-  // State for managing the number of rows per page
+  const [paginationState, setPaginationState] = useState({
+    total: 0,
+    page: 0,
+    rowsPerPage: 2,
+  });
 
-  const [rowsPerPage, setRowsPerPage] = useState(5);
-  // State for managing the total number of pages
-
-  const [totalPages, setTotalPages] = useState(0);
   // Accessing the notification handler to display notifications
-
   const { notificationHandler } = useAppContext();
+
   //Effect to fetch books on component mount
   useEffect(() => {
     fetchBooks();
   }, []);
+
   //Effect to fetch students on component mount
   useEffect(() => {
     if (selectedBook) {
-      fetchIssuedStudents(selectedBook._id);
+      fetchIssuedStudents(
+        selectedBook?._id,
+       
+      );
     }
-  }, [selectedBook, currentPage, rowsPerPage]);
+  }, [selectedBook]);
 
   // Function to fetch books
   const fetchBooks = async () => {
@@ -79,52 +81,65 @@ const BookStudentAssignment = () => {
       notificationHandler(true, "Error fetching books", "error");
     }
   };
+
   //Function to fetch book issued students
   const fetchIssuedStudents = async (bookId) => {
     if (!bookId) return;
 
     try {
-      const { transactions, total } = await getTransactionByBookId(
-        bookId,
-        currentPage,
-        rowsPerPage
-      );
-      setIssuedStudents(transactions);
-      setTotalPages(total);
-    } catch (error) {
-      console.error("Error fetching issued students", error);
-      notificationHandler(true, "Error fetching issued students", "error");
-    }
-  };
-  // Function to handle page change
-  const handlePageChange = (newPage) => {
-    setCurrentPage(newPage);
-  };
+      const response = await getTransactionByBookId(bookId);
+      if (response && response.students && response.students.length > 0) {
+        const { students: transactions, total: assignedBorrowersCount } =
+        response;
 
-  // Function to handle rows per page change
-  const handleRowsPerPageChange = (newRowsPerPage) => {
-    setRowsPerPage(newRowsPerPage);
-    setCurrentPage(1);
+      setIssuedStudents(transactions); 
+      setAssignedBorrowersCount(assignedBorrowersCount);
+      setPaginationState((prevState) => ({
+        ...prevState,
+        total: assignedBorrowersCount,
+      }));
+      } else {
+        setIssuedStudents([]); 
+      setAssignedBorrowersCount(0);
+      }
+    } catch (error) {
+      notificationHandler(true, "Error fetching issued students", "error");
+      console.error("Error fetching issued students", error);
+      setIssuedStudents([]); 
+      setAssignedBorrowersCount(0);
+    }
   };
 
   // Function to handle onChange event
   const handleBookChange = (event, newValue) => {
     setSelectedBook(newValue);
     setSelectedBookTitle(newValue ? newValue.title : "");
-    if (newValue) {
-      fetchIssuedStudents(newValue._id);
-    }
+    setPaginationState((prevState) => ({
+      ...prevState,
+      page: 0,
+    }));
   };
+
   // Function to handle renewing a book
   const handleRenew = (student) => {
     setSelectedStudent(student);
+    setBookDetails({
+      title: selectedBook.title,
+      author: selectedBook.author,
+      dueDate: student.dueDate,
+    });
     setModalMode("renew");
     setOpenRenewReturnModal(true);
   };
 
   // Function to handle returning a book
-  const handleReturn = (student) => {
+  const handleReturn = async (student) => {
     setSelectedStudent(student);
+    setBookDetails({
+      title: selectedBook.title,
+      author: selectedBook.author,
+      dueDate: student.dueDate,
+    });
     setModalMode("return");
     setOpenRenewReturnModal(true);
   };
@@ -135,41 +150,74 @@ const BookStudentAssignment = () => {
 
   const handleCloseRenewReturnModal = () => {
     setOpenRenewReturnModal(false);
-    fetchIssuedStudents(selectedBook._id);
+    if (selectedBook) {
+      fetchIssuedStudents(
+        selectedBook?._id,
+        paginationState.page,
+        paginationState.rowsPerPage
+      )
+    }
+    
   };
 
   const handleCloseIssuanceModal = () => {
     setOpenIssuanceModal(false);
     if (selectedBook) {
-      fetchIssuedStudents(selectedBook._id);
+      fetchIssuedStudents(
+        selectedBook?._id,
+        paginationState.page,
+        paginationState.rowsPerPage
+      )
     }
+    
   };
 
   // Function to handle renewing a book for the selected student
   const handleRenewBook = async () => {
+    if (selectedStudent.renewalCount >= 2) {
+      notificationHandler(true, "Cannot renew book, renewal limit reached", "warning");
+      return; 
+    }
     try {
       await createRenewal(selectedStudent._id);
       handleCloseRenewReturnModal();
+      notificationHandler(true, "Book renewed successfully", "success");
+
     } catch (error) {
       notificationHandler(true, "Error renewing book", "error");
       console.error("Error renewing book:", error);
     }
   };
-
-  // Function to handle returning a book for the selected student
+  
   const handleReturnBook = async () => {
     try {
       await updateReturnedDate(selectedStudent._id);
-      const updatedStudents = issuedStudents.filter(
-        (student) => student._id !== selectedStudent._id
-      );
+        const updatedStudents = issuedStudents.filter(student => student._id !== selectedStudent._id);
       setIssuedStudents(updatedStudents);
-      setOpenRenewReturnModal(false);
+  
       notificationHandler(true, "Book returned successfully", "success");
+      setOpenRenewReturnModal(false);
     } catch (error) {
       notificationHandler(true, "Error returning book", "error");
       console.error("Error returning book:", error);
     }
+  };
+
+  const handlePageChange = (newPage, rowsPerPage) => {
+    const maxPage = Math.ceil(assignedBorrowersCount / rowsPerPage) - 1;
+    const validNewPage = Math.min(newPage, maxPage);
+    setPaginationState((prevState) => ({
+      ...prevState,
+      page: validNewPage,
+    }));
+  };
+
+  const handleRowsPerPageChange = (newRowsPerPage) => {
+    setPaginationState((prevState) => ({
+      ...prevState,
+      rowsPerPage: newRowsPerPage,
+      page: 0,
+    }));
   };
 
   // Define table columns
@@ -274,9 +322,9 @@ const BookStudentAssignment = () => {
                 data={issuedStudents}
                 columns={studentColumns}
                 actions={actions}
-                page={currentPage}
-                total={totalPages}
-                limit={rowsPerPage}
+                total={paginationState.total}
+                page={paginationState.page}
+                rowsPerPage={paginationState.rowsPerPage}
                 onPageChange={handlePageChange}
                 onRowsPerPageChange={handleRowsPerPageChange}
               />
@@ -297,6 +345,7 @@ const BookStudentAssignment = () => {
           onClose={handleCloseRenewReturnModal}
           onAction={modalMode === "renew" ? handleRenewBook : handleReturnBook}
           actionType={modalMode}
+          bookDetails={bookDetails}
         />
       )}
       {openIssuanceModal && (

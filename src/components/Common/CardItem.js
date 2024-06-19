@@ -11,7 +11,6 @@ const CardItem = ({ data, columns, image, children }) => {
   return (
     <Card variant="outlined" className="card-container">
       <CardContent className="card-content">
-        {children && <Box className="card-action">{children}</Box>}
         {image && (
           <Box className="card-image">
             <img src={image} alt="" />
@@ -34,6 +33,7 @@ const CardItem = ({ data, columns, image, children }) => {
           ))}
         </Box>
       </CardContent>
+      {children && <Box className="card-action">{children}</Box>}
     </Card>
   );
 };

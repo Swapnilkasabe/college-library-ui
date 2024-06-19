@@ -42,31 +42,30 @@ const Book = () => {
   const [deleteConfirmationOpen, setDeleteConfirmationOpen] = useState(false);
   //State for managing the delete book operation
   const [deletingBook, setDeletingBook] = useState(null);
-  // State for managing the total number of students
-  const [totalBooks, setTotalBooks] = useState(0);
-  // State for managing the current page number
-  const [currentPage, setCurrentPage] = useState(1);
-  // State for managing the number of rows per page
-  const [rowsPerPage, setRowsPerPage] = useState(5);
-  // State for managing the total number of pages
-  const [pageCount, setPageCount] = useState(0);
+  const [paginationState, setPaginationState] = useState({
+    total: 0,
+    page: 0,
+    rowsPerPage: 2,
+  });
 
   // Access state from context for displaying notification
   const { notificationHandler } = useAppContext();
 
   // Effect to fetch books on component mount
   useEffect(() => {
-    fetchBooks();
-  }, [currentPage, rowsPerPage]);
+    fetchBooks(paginationState.page, paginationState.rowsPerPage);
+  }, [paginationState.page, paginationState.rowsPerPage]);
 
   // Function to fetch books
-  const fetchBooks = async () => {
+  const fetchBooks = async (page, rowsPerPage) => {
     try {
-      const { books, total } = await getAllBooks(currentPage, rowsPerPage);
+      const response = await getAllBooks(page, rowsPerPage);
+      const {books, totalBooksCount} = response;
       setBooks(books);
-      setTotalBooks(total);
-      const calculatedPageCount = Math.ceil(total / rowsPerPage);
-      setPageCount(calculatedPageCount);
+      setPaginationState((prevState) => ({
+        ...prevState,
+        total:totalBooksCount,
+      }));
     } catch (error) {
       console.error("Error fetching books", error);
       notificationHandler(true, "Error fetching books", "error");
@@ -166,16 +165,7 @@ const Book = () => {
       tooltip: "Delete Book",
     },
   ];
-  // Function to handle rows per page change
-  const handleRowsPerPageChange = (newRowsPerPage) => {
-    setRowsPerPage(newRowsPerPage);
-    setCurrentPage(1);
-  };
-
-  // Function to handle page change
-  const handlePageChange = (newPage) => {
-    setCurrentPage(newPage);
-  };
+ 
 
   return (
     <Grid
@@ -203,12 +193,25 @@ const Book = () => {
           data={books}
           columns={columns}
           actions={actions}
-          total={totalBooks}
-          limit={rowsPerPage}
-          page={currentPage}
-          pageCount={pageCount}
-          onPageChange={handlePageChange}
-          onRowsPerPageChange={handleRowsPerPageChange}
+          total={paginationState.total}
+          page={paginationState.page}
+          rowsPerPage={paginationState.rowsPerPage}
+          onPageChange={(newPage, rowsPerPage) => {
+
+            setPaginationState((prevState) => ({
+              ...prevState,
+              page: newPage,
+              rowsPerPage,
+            }));
+          }}
+          onRowsPerPageChange={(newRowsPerPage) => {
+
+            setPaginationState({
+              ...paginationState,
+              rowsPerPage: newRowsPerPage,
+              page: 0, 
+            });
+          }}
         />
       </Box>
       {/* Book modal component  */}

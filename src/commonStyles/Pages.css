@@ -5,7 +5,7 @@
   margin: var(--spacing-xs);
   padding: var(--spacing-xs);
   width: 100%;
-  max-width: 56.25rem;
+  max-width: 100%;
   margin-bottom: var(--spacing-md);
   display: flex;
   flex-direction: column;
@@ -46,6 +46,25 @@
   color: var(--delete-icon-color);
 }
 
+@media (max-width: 1085px) {
+  .generic-table-container {
+    width: 100%; 
+    min-width: unset; 
+  }
+}
+
+@media (max-width: 690px) {
+  .form-container .heading {
+    text-align: center;
+  }
+}
+
+@media (max-width: 786px) {
+  .form-container .button-container {
+    display: flex;
+    justify-content: center;
+  }
+}
 /* Book Lending-Pages */
 
 .page-container {
@@ -63,9 +82,11 @@
   display: flex;
   align-items: center;
   justify-content: center;
+  width: 100%;
 }
 
 .autocomplete{
+  width: 100%; 
 width: calc(var(--spacing-xl)*7);
 margin: var(--spacing-md);
 }
@@ -99,4 +120,17 @@ margin: var(--spacing-md);
   padding: var(--spacing-xs) var(--spacing-sm); 
   white-space: nowrap; 
   transition: background-color 0.3s ease;
+}
+
+@media (max-width: 1085px) {
+  .page-container .issue-book-button {
+    font-size: calc(var(--font-size-xs)*2);
+  } 
+}
+
+@media (max-width: 840px) {
+  .page-container .page-form-container {
+    display: flex;
+    flex-direction: column;
+  } 
 }

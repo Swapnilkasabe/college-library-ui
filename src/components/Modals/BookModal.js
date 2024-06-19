@@ -60,6 +60,9 @@ const AddBookModal = ({ isOpen, onClose, onAdd, initialBookData }) => {
   }, [isOpen, initialBookData]);
 
   const modeTitle = isEmptyString(initialBookData.bookId) ? "Add" : "Update";
+  const hasChanges =
+    JSON.stringify(bookData) !== JSON.stringify(initialBookData);
+
   if (!isOpen) {
     return <></>;
   }
@@ -135,7 +138,12 @@ const AddBookModal = ({ isOpen, onClose, onAdd, initialBookData }) => {
             />
           </Box>
           <div className="modal-buttons">
-            <Button variant="contained" color="primary" onClick={handleAdd}>
+            <Button
+              variant="contained"
+              color="primary"
+              onClick={handleAdd}
+              disabled={!hasChanges}
+            >
               {modeTitle} Book
             </Button>
             <Button onClick={onCloseHandle} variant="contained">
