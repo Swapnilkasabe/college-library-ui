@@ -102,9 +102,52 @@ const Sidebar = ({ active, setActive, sidebarOpen, setSidebarOpen }) => {
                 onClick={handleToggleSidebar}
               ></div>
             </div>
+            <div className="book-lending-option">
+            <Typography
+              variant="body1"
+              component="p"
+              className={`dashboard-option ${
+                active === "bookLending" ? "clicked" : ""
+              }`}
+            >
+              <LocalLibraryIcon className="dashboard-option-icon" /> Transaction history
+              <ArrowDropDownIcon />
+            </Typography>
+            {/* Submenu options for book lending */}
+            <div className="book-wise-submenu">
+              <Link to={"/Student-wise-history"} className="sidebar-link">
+                <Typography
+                  variant="body1"
+                  component="p"
+                  className={`dashboard-option ${
+                    active === "studentPage" ? "clicked" : ""
+                  }`}
+                  onClick={() => setActive("studentPage")}
+                >
+                  <AccountBoxIcon className="dashboard-option-icon" /> Student List
+                </Typography>
+              </Link>
+              <Link to={"/Book-wise-history"} className="sidebar-link">
+                <Typography
+                  variant="body1"
+                  component="p"
+                  className={`dashboard-option ${
+                    active === "bookPage" ? "clicked" : ""
+                  }`}
+                  onClick={() => setActive("bookPage")}
+                >
+                  <MenuBookIcon className="dashboard-option-icon" /> Book List
+                </Typography>
+              </Link>
+              <div
+                className="sidebar-toggler"
+                onClick={handleToggleSidebar}
+              ></div>
+            </div>
             <div className="sidebar-logout">
                 <Logout />
               </div>
+          </div>
           </div>
         </Grid>
       </Grid>

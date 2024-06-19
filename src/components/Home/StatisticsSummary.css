@@ -49,3 +49,21 @@
 .statistics-summary-container .statistics-summary-stat:hover .statistics-summary-label {
   color: #000000;
 }
+.statistics-summary-container .charts-container {
+  display: flex;
+  justify-content: space-between; 
+  align-items: center; 
+  margin-top: var(--spacing-xs);
+}
+
+.statistics-summary-container .bar-chart {
+  width: 100%; 
+  max-width: 600px; 
+  height: 250px; 
+  border-radius: var(--spacing-sm);
+  margin-top: var(--spacing-xl);
+  padding: var(--table-padding);
+  transition: background-color 0.3s ease, box-shadow 0.3s ease, transform 0.3s ease;
+}
+
+

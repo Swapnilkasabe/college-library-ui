@@ -8,14 +8,20 @@ import {
   IconButton,
   Typography,
 } from "@mui/material";
-import { getAllBooks, updateBook } from "../../services/book.service";
+import {
+  getAllBooks,
+  getBookById,
+  updateBook,
+} from "../../services/book.service";
+import getTransactionsByStudentId, {
+  getTransactionByStudentId,
+} from "../../services/bookTransaction.service";
 import CloseIcon from "@mui/icons-material/Close";
 import { createLending } from "../../services/bookTransaction.service";
 import { useAppContext } from "../../contexts/AppContext.Provider";
 import { getAllStudents } from "../../services/student.service";
 import "./Modal.css";
 
-// Component for issuing books
 const BookIssuanceModal = ({
   isOpen,
   onClose,
@@ -24,110 +30,138 @@ const BookIssuanceModal = ({
   selectedStudent,
   onBookIssued,
   selectedStudentName,
-  selectedBookTitle,
 }) => {
   const { notificationHandler } = useAppContext();
-  // State to store the list of books or students
   const [list, setList] = useState([]);
-  // State to store the selected book or student
   const [selectedItem, setSelectedItem] = useState(null);
-  // State to store the book or student item details
   const [selectedItemDetails, setSelectedItemDetails] = useState(null);
+  const [isBookAlreadyIssued, setIsBookAlreadyIssued] = useState(false);
+  const [selectedBookDetails, setSelectedBookDetails] = useState(null);
 
-  // Fetching books or students based on the mode
   useEffect(() => {
     if (mode === "issueBook") {
       fetchBooks();
     } else if (mode === "assignStudent") {
       fetchStudents();
     }
-  }, [mode, selectedBook, selectedStudent]);
+  }, [mode]);
 
-  // Fetch all books
   const fetchBooks = async () => {
     try {
-      const response = await getAllBooks();
-      if (response && response.books) {
-        setList(response.books);
-      } else {
-        throw new Error("Invalid response format");
-      }
+      const { books } = await getAllBooks(); // Fetch only available books
+      setList(books);
     } catch (error) {
       notificationHandler(true, "Error fetching books", "error");
       console.error("Error fetching books", error);
     }
   };
 
-  // Fetch all students
   const fetchStudents = async () => {
     try {
-      const response = await getAllStudents();
-      if (response && response.students) {
-        setList(response.students);
-      } else {
-        throw new Error("Invalid response format");
-      }
+      const { students } = await getAllStudents();
+      setList(students);
     } catch (error) {
       notificationHandler(true, "Error fetching students", "error");
       console.error("Error fetching students", error);
     }
   };
 
-  // Function to handle change in the selected book or student
   const handleItemChange = (event, newValue) => {
     setSelectedItem(newValue);
     setSelectedItemDetails(newValue);
+    setIsBookAlreadyIssued(false);
+
+    if (mode === "issueBook" && newValue) {
+      fetchBookDetails(newValue._id);
+      checkBookAlreadyIssued(newValue._id, selectedStudent?._id);
+    }
   };
 
-  // Handle form submission
+  const fetchBookDetails = async (bookId) => {
+    try {
+      const { book } = await getBookById(bookId);
+      setSelectedBookDetails(book);
+    } catch (error) {
+      notificationHandler(true, "Error fetching book details", "error");
+      console.error("Error fetching book details", error);
+    }
+  };
+
+  const checkBookAlreadyIssued = async (bookId, studentId) => {
+    try {
+      const response = await getTransactionByStudentId(studentId);
+      if (response && response.books) {
+        const issuedBooksIds = response.books.map((book) => book.bookId._id);
+        setIsBookAlreadyIssued(issuedBooksIds.includes(bookId));
+      }
+    } catch (error) {
+      console.error("Error checking book issuance status:", error);
+      notificationHandler(true, "Error checking book issuance status", "error");
+    }
+  };
+
   const handleSubmit = async () => {
     try {
-      if (mode === "issueBook") {
-        const lendingData = {
-          bookId: selectedItem,
-          studentId: selectedStudent._id,
-        };
-        const response = await createLending(lendingData);
-        if (response.errors && response.errors.length > 0) {
-          notificationHandler(true, "Error issuing book.", "error");
-          console.error("Validation errors:", response.errors);
-          return;
-        }
-        await updateBook(selectedItem, { status: "issued" });
-        notificationHandler(true, "Successfully issued book", "success");
-      } else if (mode === "assignStudent") {
-        const lendingData = {
-          bookId: selectedBook._id,
-          studentId: selectedItem,
-        };
-        const response = await createLending(lendingData);
-        if (response.errors && response.errors.length > 0) {
-          notificationHandler(true, "Error assigning student.", "error");
-          console.error("Validation errors:", response.errors);
-          return;
-        }
-        notificationHandler(true, "Successfully assigned borrower", "success");
+      if (mode === "issueBook" && isBookAlreadyIssued) {
+        notificationHandler(
+          true,
+          "This book is already issued to the student.",
+          "warning"
+        );
+        return;
       }
-      setSelectedItem("");
-      setSelectedItemDetails("");
-      onClose();
-      onBookIssued();
+
+      let lendingData = {};
+      if (mode === "issueBook") {
+        lendingData = {
+          bookId: selectedItem?._id,
+          studentId: selectedStudent?._id,
+        };
+      } else if (mode === "assignStudent") {
+        lendingData = {
+          bookId: selectedBook?._id,
+          studentId: selectedItem?._id,
+        };
+      }
+
+      const response = await createLending(lendingData);
+      if (response.errors && response.errors.length > 0) {
+        notificationHandler(
+          true,
+          `Error ${
+            mode === "issueBook" ? "issuing book" : "assigning student"
+          }`,
+          "error"
+        );
+        console.error("Validation errors:", response.errors);
+        return;
+      }
+
+      notificationHandler(
+        true,
+        `Successfully ${
+          mode === "issueBook" ? "issued book" : "assigned borrower"
+        }`,
+        "success"
+      );
+      await onBookIssued();
+      handleClose();
     } catch (error) {
       console.error("Error submitting form:", error);
       notificationHandler(true, "Error submitting form.", "error");
     }
   };
 
-  // Handle close button click
-  const onCloseHandle = () => {
-    setSelectedItem("");
+  const handleClose = () => {
+    setSelectedItem(null);
     setSelectedItemDetails(null);
+    setSelectedBookDetails(null);
     setList([]);
     onClose();
   };
 
   return (
-    <Modal open={isOpen} onClose={onCloseHandle}>
+    <Modal open={isOpen} onClose={handleClose}>
       <div className="modal-content issuance-modal">
         <div className="modal-header">
           <h3>
@@ -135,11 +169,7 @@ const BookIssuanceModal = ({
               ? `Issue Book to "${selectedStudentName || "Selected Student"}"`
               : `Assign Borrower for "${selectedBook?.title || "a Book"}"`}
           </h3>
-
-          <IconButton
-            onClick={onCloseHandle}
-            className="close-icon close-button"
-          >
+          <IconButton onClick={handleClose} className="close-icon close-button">
             <CloseIcon />
           </IconButton>
         </div>
@@ -163,35 +193,32 @@ const BookIssuanceModal = ({
               )}
             />
           </FormControl>
-          {selectedItemDetails && (
+          {selectedItemDetails && mode === "issueBook" && (
             <div className="selected-item-details">
-              {mode === "issueBook" ? (
-                <div>
-                  <Typography variant="h6">Book Details</Typography>
-                  <Typography variant="body2">
-                    <strong>Title:</strong> {selectedItemDetails.title}
-                  </Typography>
-                  <Typography variant="body2">
-                    <strong>ID:</strong> {selectedItemDetails.bookId}
-                  </Typography>
-                  <Typography variant="body2">
-                    <strong>Author:</strong> {selectedItemDetails.author}
-                  </Typography>
-                </div>
-              ) : (
-                <div>
-                  <Typography variant="h6">Student Details</Typography>
-                  <Typography variant="body2">
-                    <strong>Name:</strong> {selectedItemDetails.name}
-                  </Typography>
-                  <Typography variant="body2">
-                    <strong>ID:</strong> {selectedItemDetails.studentId}
-                  </Typography>
-                  <Typography variant="body2">
-                    <strong>Email:</strong> {selectedItemDetails.email}
-                  </Typography>
-                </div>
-              )}
+              <Typography variant="h6">Book Details</Typography>
+              <Typography variant="body2">
+                <strong>Title:</strong> {selectedItemDetails.title}
+              </Typography>
+              <Typography variant="body2">
+                <strong>ID:</strong> {selectedItemDetails.bookId}
+              </Typography>
+              <Typography variant="body2">
+                <strong>Author:</strong> {selectedItemDetails.author}
+              </Typography>
+            </div>
+          )}
+          {selectedItemDetails && mode === "assignStudent" && (
+            <div className="selected-item-details">
+              <Typography variant="h6">Student Details</Typography>
+              <Typography variant="body2">
+                <strong>Name:</strong> {selectedItemDetails.name}
+              </Typography>
+              <Typography variant="body2">
+                <strong>ID:</strong> {selectedItemDetails.studentId}
+              </Typography>
+              <Typography variant="body2">
+                <strong>Email:</strong> {selectedItemDetails.email}
+              </Typography>
             </div>
           )}
           <div className="modal-buttons">
@@ -206,7 +233,7 @@ const BookIssuanceModal = ({
             <Button
               variant="contained"
               className="cancel-button"
-              onClick={onCloseHandle}
+              onClick={handleClose}
             >
               Close
             </Button>

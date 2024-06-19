@@ -1,13 +1,13 @@
 @import url("../../App.css");
 .generic-table-container {
   border-radius: var(--spacing-sm);
-  overflow: hidden;
-  margin-bottom: var(--spacing-md);
-  width: 100%;
-  min-width: calc(var(--spacing-xl)*22);
-  table-layout: auto;
-  font-family: Arial, sans-serif;
-  font-weight: normal;
+overflow: hidden;
+width: 100%;
+margin-bottom: var(--spacing-md);
+min-width: calc(var(--spacing-xl)*22);
+table-layout: fixed;
+font-family: Arial, sans-serif;
+font-weight: normal;
 }
 
 .generic-table-container .table-container th {
@@ -24,6 +24,7 @@
   padding: var(--spacing-xs);
   font-size: var(--table-data-font);
   }
+
 
 .generic-table-container .truncate-text {
   white-space: nowrap;
