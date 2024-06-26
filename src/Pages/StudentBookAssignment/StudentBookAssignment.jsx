@@ -3,7 +3,6 @@ import {
   Typography,
   Box,
   Button,
-  Tooltip,
   Autocomplete,
   TextField,
 } from "@mui/material";
@@ -41,12 +40,12 @@ const StudentBookAssignment = () => {
   const [selectedBook, setSelectedBook] = useState(null);
   // State for managing the name of the selected student
   const [selectedStudentName, setSelectedStudentName] = useState("");
-
+  // State for managing the count of issued books
   const [issuedBooksCount, setIssuedBooksCount] = useState(0);
 
   // State for managing book details for the modal
   const [bookDetails, setBookDetails] = useState(null);
-  
+
   // State for managing the modal mode (renew/return)
   const [modalMode, setModalMode] = useState(null);
 
@@ -88,12 +87,12 @@ const StudentBookAssignment = () => {
   // Function to fetch issued books
   const fetchIssuedBooks = async (studentId) => {
     if (!studentId) return;
-  
+
     try {
       const response = await getTransactionByStudentId(studentId);
       if (response && response.books && response.books.length > 0) {
         const { books: transactions, total: issuedBooksCount } = response;
-        
+
         setIssuedBooks(transactions);
         setIssuedBooksCount(issuedBooksCount);
         setPaginationState((prevState) => ({
@@ -111,7 +110,6 @@ const StudentBookAssignment = () => {
       setIssuedBooksCount(0);
     }
   };
-  
 
   // Function to handle onChange event
   const handleStudentChange = (event, newValue) => {
@@ -119,6 +117,7 @@ const StudentBookAssignment = () => {
     setSelectedStudentName(newValue ? newValue.name : "");
   };
 
+    // Function to handle the book renew 
   const handleRenew = (book) => {
     setSelectedBook(book);
     setBookDetails({
@@ -130,6 +129,7 @@ const StudentBookAssignment = () => {
     setOpenRenewReturnModal(true);
   };
 
+    // Function to handle the return of a book 
   const handleReturn = (book) => {
     setSelectedBook(book);
     setBookDetails({
@@ -172,8 +172,12 @@ const StudentBookAssignment = () => {
   // Function to handle renewing a book for the selected student
   const handleRenewBook = async () => {
     if (selectedBook.renewalCount >= 2) {
-      notificationHandler(true, "Cannot renew book, renewal limit reached", "warning");
-      return; 
+      notificationHandler(
+        true,
+        "Cannot renew book, renewal limit reached",
+        "warning"
+      );
+      return;
     }
     try {
       await createRenewal(selectedBook._id);
@@ -201,6 +205,7 @@ const StudentBookAssignment = () => {
       console.error("Error returning book:", error);
     }
   };
+  
 
   const columns = [
     { key: "name", label: "Name" },
@@ -236,13 +241,13 @@ const StudentBookAssignment = () => {
       nestedKeyDelimeter: "$",
     },
     { key: "status", label: "Status" },
-    { 
+    {
       key: "dueDate",
       label: "Due Date",
     },
   ];
 
-  // Define table actions with custom icons
+  // Define table actions 
   const actions = [
     {
       label: "Renew",
@@ -258,22 +263,36 @@ const StudentBookAssignment = () => {
     },
   ];
 
- const handlePageChange = (newPage, rowsPerPage) => {
-  const maxPage = Math.ceil(issuedBooksCount / rowsPerPage) - 1;
-  const validNewPage = Math.min(newPage, maxPage);
-  setPaginationState((prevState) => ({
-    ...prevState,
-    page: validNewPage,
-  }));
-};
+    // Handle page change for pagination
+  const handlePageChange = (newPage, rowsPerPage) => {
+    const maxPage = Math.ceil(issuedBooksCount / rowsPerPage) - 1;
+    const validNewPage = Math.min(newPage, maxPage);
+    setPaginationState((prevState) => ({
+      ...prevState,
+      page: validNewPage,
+    }));
+  };
 
-const handleRowsPerPageChange = (newRowsPerPage) => {
-  setPaginationState((prevState) => ({
-    ...prevState,
-    rowsPerPage: newRowsPerPage,
-    page: 0,
-  }));
-};
+    // Handle rows per page change for pagination
+  const handleRowsPerPageChange = (newRowsPerPage) => {
+    setPaginationState((prevState) => ({
+      ...prevState,
+      rowsPerPage: newRowsPerPage,
+      page: 0,
+    }));
+  };
+  
+    // Define the issue book button
+  const issueBookBtn = (
+    <Button
+      variant="outlined"
+      startIcon={<AddIconButton />}
+      onClick={handleIssueBookClick}
+      className="issue-book-button"
+    >
+      Issue Book
+    </Button>
+  );
 
   return (
     <Box className="page-container">
@@ -300,24 +319,15 @@ const handleRowsPerPageChange = (newRowsPerPage) => {
           className="autocomplete"
         />
       </Box>
+
       {selectedStudent ? (
         <>
           <CardItem
             data={selectedStudent}
             columns={columns}
+            issueBookBtn={issueBookBtn}
             image="Assets/user.png"
-          >
-            <Tooltip title="Click to issue a new book" arrow>
-              <Button
-                variant="outlined"
-                startIcon={<AddIconButton />}
-                onClick={handleIssueBookClick}
-                className="issue-book-button"
-              >
-                Issue Book
-              </Button>
-            </Tooltip>
-          </CardItem>
+          />
           <Box className="table-container">
             <div className="table-content">
               <GenericTable
@@ -349,7 +359,6 @@ const handleRowsPerPageChange = (newRowsPerPage) => {
           actionType={modalMode}
           bookDetails={bookDetails}
         />
-        
       )}
       {openIssuanceModal && (
         <BookIssuanceModal
