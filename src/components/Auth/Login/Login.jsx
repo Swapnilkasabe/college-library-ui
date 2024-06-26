@@ -52,7 +52,7 @@ const Login = () => {
     }
     try {
       const response = await userLogin(formData);
-      if (response.success) {
+      if (response?.success) {
         localStorageService.set('token', response.token);
         setIsLogin(true);
         notificationHandler(true, "Logged in successfully", "success");
