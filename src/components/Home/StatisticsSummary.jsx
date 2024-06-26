@@ -12,49 +12,53 @@ import {
   Legend,
   ResponsiveContainer,
 } from "recharts";
-
+import clsx from 'clsx';
 import "./StatisticsSummary.css";
 
-const StatisticsSummary = () => {
+const StatisticsSummary = ({ isDrawerOpen }) => {
   const [loading, setLoading] = useState(true);
   const [totalBooks, setTotalBooks] = useState(0);
   const [totalAvailableBooks, setTotalAvailableBooks] = useState(0);
   const [totalIssuedBooks, setTotalIssuedBooks] = useState(0);
   const [totalOverdueBooks, setTotalOverdueBooks] = useState(0);
 
+  const fetchData = async () => {
+    try {
+      // Fetch all books
+      const booksResponse = await getAllBooks();
+      const books = booksResponse.books;
+      setTotalBooks(books.length);
+
+      // Fetch all lendings
+      const lendings = await getAllLendings();
+      const issuedBookIds = lendings.map((lending) => lending.bookId);
+
+      // Calculate available books
+      const availableBooks = books.filter(
+        (book) => !issuedBookIds.includes(book._id)
+      );
+      setTotalAvailableBooks(availableBooks.length);
+
+      setTotalIssuedBooks(issuedBookIds.length);
+
+      // Calculate overdue books
+      const overdueBooks = lendings.filter(
+        (lending) => lending.dueDate && new Date(lending.dueDate) < new Date() && !lending.returnedDate
+      ).length;
+      setTotalOverdueBooks(overdueBooks);
+
+      setLoading(false);
+    } catch (error) {
+      console.error("Error fetching statistics:", error);
+      setLoading(false);
+    }
+  };
+
   useEffect(() => {
-    const fetchData = async () => {
-      try {
-        const booksResponse = await getAllBooks();
-        const books = booksResponse.books;
-        setTotalBooks(books.length);
-
-        const lendings = await getAllLendings();
-        const issuedBookIds = lendings.map((lending) => lending.bookId);
-
-        const availableBooks = books.filter(
-          (book) => !issuedBookIds.includes(book._id)
-        );
-        setTotalAvailableBooks(availableBooks.length);
-
-        const issuedBooks = books.length - availableBooks.length;
-        setTotalIssuedBooks(issuedBooks);
-
-        const overdueBooks = lendings.filter(
-          (lending) => new Date(lending.dueDate) < new Date()
-        ).length;
-        setTotalOverdueBooks(overdueBooks);
-
-        setLoading(false);
-      } catch (error) {
-        console.error("Error fetching statistics:", error);
-        setLoading(false);
-      }
-    };
-
     fetchData();
   }, []);
 
+  // Data for the bar chart
   const data = [
     { name: "Total Books", value: totalBooks },
     { name: "Available Books", value: totalAvailableBooks },
@@ -63,7 +67,7 @@ const StatisticsSummary = () => {
   ];
 
   return (
-    <div className="statistics-summary-container">
+    <div className={clsx("statistics-summary-container", { "drawer-open": isDrawerOpen })}>
       <Typography className="statistics-summary-title">
         College Library Dashboard
       </Typography>
@@ -73,11 +77,7 @@ const StatisticsSummary = () => {
       {loading ? (
         <CircularProgress />
       ) : (
-        <Grid
-          container
-          spacing={2}
-          className="statistics-summary-stat-container"
-        >
+        <Grid container spacing={2} className="statistics-summary-stat-container">
           <Grid item xs={12} sm={6} md={3}>
             <Paper className="statistics-summary-stat">
               <Typography variant="body1" className="statistics-summary-label">
@@ -118,6 +118,7 @@ const StatisticsSummary = () => {
               </Typography>
             </Paper>
           </Grid>
+
           <Grid item xs={12}>
             <div className="charts-container">
               <div className="pie-chart">

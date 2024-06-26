@@ -1,13 +1,13 @@
 @import url("../../App.css");
 .generic-table-container {
   border-radius: var(--spacing-sm);
-overflow: hidden;
-width: 100%;
-margin-bottom: var(--spacing-md);
-min-width: calc(var(--spacing-xl)*22);
-table-layout: fixed;
-font-family: Arial, sans-serif;
-font-weight: normal;
+  overflow-y: auto;
+  width: 100%;
+  margin-bottom: var(--spacing-md);
+  min-width: calc(var(--spacing-xl) * 21);
+  table-layout: fixed;
+  font-family: Arial, sans-serif;
+  font-weight: normal;
 }
 
 .generic-table-container .table-container th {
@@ -16,30 +16,95 @@ font-weight: normal;
   padding: var(--spacing-xs);
   font-weight: bold;
   text-align: center;
-  border-right: .0063rem solid #fff;
+  border-right: 0.0063rem solid #fff;
   font-size: var(--table-heading-font);
 }
 .generic-table-container .table-container td {
   text-align: center;
   padding: var(--spacing-xs);
   font-size: var(--table-data-font);
-  }
-
+}
 
 .generic-table-container .truncate-text {
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
-  max-width: calc(var(--spacing-xl)*5); 
+  max-width: calc(var(--spacing-xl) * 5);
   display: inline-block;
   vertical-align: middle;
 }
 
 .generic-table-container .actions-header {
   text-align: right;
-  padding-right: calc(var(--spacing-md)); 
+  padding-right: calc(var(--spacing-md));
 }
 
 .generic-table-container tbody tr:nth-child(even) {
   background-color: #f2f2f2;
+}
+
+.search-box-container {
+  display: flex;
+  justify-content: flex-start; 
+  align-items: center;
+  padding: .5rem 1rem; 
+  background-color: transparent;
+  margin-bottom: .5rem;
+}
+
+.search-box-container .search-text-field {
+  width: 8.75rem; 
+  background-color: transparent;
+  border-radius: .9375rem; 
+}
+
+.search-box-container .search-icon {
+  color: rgba(0, 0, 0, 0.54);
+  margin-right: .3125rem;
+  font-size: 1rem;
+}
+
+.search-box-container .filter-box-container {
+  display: flex;
+  align-items: center;
+  border-radius: none; 
+  overflow: hidden;
+  margin-left: 1rem; 
+}
+
+.search-box-container .filter-icon {
+  color: rgba(0, 0, 0, 0.54);
+  margin-right: .25rem;
+  cursor: pointer;
+  font-size: 1.2rem;
+}
+.search-box-container .filter-text {
+  font-size: 0.6rem; 
+  cursor: pointer;
+}
+
+.search-box-container .status-select {
+  border-radius: .625rem; 
+  width: 6.25rem; 
+  background-color: transparent;
+}
+
+ .custom-pagination {
+  .MuiTablePagination-toolbar {
+    min-height: 16px; 
+  }
+  .MuiTablePagination-selectLabel,
+  .MuiTablePagination-displayedRows {
+    margin: 0 2px; 
+  }
+  .MuiTablePagination-actions {
+    margin-right: 2px; 
+  }
+}
+
+
+@media (max-width: 23.4375rem) {
+  .generic-table-container {
+    overflow-x: auto;
+  }
 }

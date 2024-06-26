@@ -1,15 +1,19 @@
 @import url("../App.css");
 
-/* Student & Book Page Styles */
 .form-container {
   margin: var(--spacing-xs);
   padding: var(--spacing-xs);
   width: 100%;
   max-width: 100%;
-  margin-bottom: var(--spacing-md);
   display: flex;
   flex-direction: column;
   align-items: center;
+  overflow-x: auto;
+}
+
+.form-container .table-container {
+  width: 100%;
+  overflow-x: auto;
 }
 
 .form-container .heading {
@@ -19,15 +23,7 @@
   text-align: center;
 }
 
-.form-container .button-container {
-  margin-bottom: var(--spacing-xs);
-  display: flex;
-  justify-content: flex-end;
-  width: 100%;
-  margin-right: var(--spacing-sm);
-}
-
-.form-container .button-container > button {
+.form-container .add-button {
   padding: var(--spacing-xs);
   font-size: var(--font-size-sm);
   font-weight: bold;
@@ -46,10 +42,10 @@
   color: var(--delete-icon-color);
 }
 
-@media (max-width: 1085px) {
+@media (max-width: 1230px) {
   .generic-table-container {
-    width: 100%; 
-    min-width: unset; 
+    width: 100%;
+    min-width: unset;
   }
 }
 
@@ -59,78 +55,101 @@
   }
 }
 
-@media (max-width: 786px) {
-  .form-container .button-container {
-    display: flex;
-    justify-content: center;
+@media (max-width: 860px) {
+  .form-container {
+    overflow-x: auto;
   }
 }
+
 /* Book Lending-Pages */
 
 .page-container {
   display: flex;
   flex-direction: column;
   align-items: flex-start;
-  margin-top: var(--spacing-xs);
   padding-left: var(--spacing-sm);
   gap: var(--spacing-xs);
 }
 
-.page-form-container {
+@media (max-width: 600px) {
+  .page-container {
+    padding: var(--spacing-xs);
+  }
+}
+
+.page-container .page-form-container {
   margin-top: var(--spacing-xs);
-  padding-left: var(--spacing-sm);
+  padding-left: var(--spacing-md);
   display: flex;
   align-items: center;
-  justify-content: center;
+  justify-content: flex-start;
   width: 100%;
-}
-
-.autocomplete{
-  width: 100%; 
-width: calc(var(--spacing-xl)*7);
-margin: var(--spacing-md);
-}
-
-.MuiAutocomplete-option {
-  padding: .5rem .75rem;
-  font-size: var( --font-size-sm);
-  cursor: pointer;
-}
-
-.no-option-selected-message{
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  margin-top: calc(var(--spacing-lg)*2);
-}
-
-.no-option-selected-message .MuiSvgIcon-root{
-  color: #666;
-  font-size: var(--spacing-xl);
-  margin-bottom: var(--margin);
-
-}
-
-.page-container .issue-book-button {
-  position: absolute;
-  top: var(--spacing-sm);
-  right: var(--spacing-sm);
-  font-size: var(--font-size-sm);
-  font-weight: bold;
-  padding: var(--spacing-xs) var(--spacing-sm); 
-  white-space: nowrap; 
-  transition: background-color 0.3s ease;
-}
-
-@media (max-width: 1085px) {
-  .page-container .issue-book-button {
-    font-size: calc(var(--font-size-xs)*2);
-  } 
 }
 
 @media (max-width: 840px) {
   .page-container .page-form-container {
-    display: flex;
     flex-direction: column;
-  } 
+    align-items: flex-start;
+    padding-left: var(--spacing-xs);
+  }
+}
+
+.autocomplete {
+  width: 100%;
+  max-width: 300px;
+  margin: var(--spacing-md);
+  float: left;
+}
+
+@media (max-width: 600px) {
+  .autocomplete {
+    max-width: 100%;
+    margin: var(--spacing-xs) 0;
+  }
+}
+
+.MuiAutocomplete-option {
+  padding: 0.5rem 0.75rem;
+  font-size: var(--font-size-sm);
+  cursor: pointer;
+}
+
+.no-option-selected-message {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin-top: calc(var(--spacing-lg) * 2);
+}
+
+.no-option-selected-message .MuiSvgIcon-root {
+  color: #666;
+  font-size: var(--spacing-xl);
+  margin-bottom: var(--margin);
+}
+
+.page-container .button-container {
+  display: flex;
+  justify-content: flex-end;
+  width: 100%;
+  padding-right: var(--spacing-md);
+  margin-bottom: var(--spacing-xs);
+}
+
+.page-container .issue-book-button {
+  font-size: var(--font-size-sx);
+  font-weight: bold;
+  padding: var(--spacing-xs);
+  white-space: nowrap;
+  transition: background-color 0.3s ease;
+}
+
+@media (max-width: 840px) {
+  .page-container .issue-book-button {
+    font-size: var(--font-size-xs);
+    padding: var(--spacing-xs) var(--spacing-sm);
+  }
+}
+
+.page-container .issue-book-button:hover {
+  background-color: var(--hover-color);
 }

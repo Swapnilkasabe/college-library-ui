@@ -60,7 +60,7 @@ const Book = () => {
   const fetchBooks = async (page, rowsPerPage) => {
     try {
       const response = await getAllBooks(page, rowsPerPage);
-      const {books, totalBooksCount} = response;
+      const { books, totalBooksCount } = response;
       setBooks(books);
       setPaginationState((prevState) => ({
         ...prevState,
@@ -89,6 +89,19 @@ const Book = () => {
     try {
       let response;
       if (newBook?._id) {
+        const existingBook = books.find(
+          (book) => book.bookId === newBook.bookId && book._id !== newBook._id
+        );
+        
+        if (existingBook) {
+          notificationHandler(
+            true,
+            "Another book with the provided ID already exists",
+            "error"
+          );
+          return;
+        }
+        
         const { errors, isError } = bookUpdateValidation(newBook);
         if (isError) {
           notificationHandler(true, "Validation error: " + errors, "error");
@@ -96,6 +109,19 @@ const Book = () => {
         }
         response = await updateBook(newBook.bookId, newBook);
       } else {
+        const existingBook = books.find(
+          (book) => book.bookId === newBook.bookId
+        );
+
+        if (existingBook) {
+          notificationHandler(
+            true,
+            "Book with the provided ID already exists",
+            "error"
+          );
+          return;
+        }
+
         const { errors, isError } = bookCreationValidation(newBook);
         if (isError) {
           notificationHandler(true, "Validation error: " + errors, "error");
@@ -144,6 +170,20 @@ const Book = () => {
     setDeleteConfirmationOpen(false);
   };
 
+  // Define add button for book
+  const addButton = (
+    <Tooltip title="Click to add a new book" arrow>
+      <Button
+        className="add-button"
+        variant="outlined"
+        startIcon={<AddIconButton />}
+        onClick={() => openAddAndEditModal()}
+      >
+        ADD
+      </Button>
+    </Tooltip>
+  );
+
   // Define table columns
   const columns = [
     { key: "title", label: "Title" },
@@ -165,7 +205,6 @@ const Book = () => {
       tooltip: "Delete Book",
     },
   ];
- 
 
   return (
     <Grid
@@ -177,17 +216,6 @@ const Book = () => {
       <Typography variant="h5" className="heading">
         Book Page
       </Typography>
-      <Box className="button-container">
-        <Tooltip title="Click to add a new book" arrow>
-          <Button
-            variant="outlined"
-            startIcon={<AddIconButton />}
-            onClick={() => openAddAndEditModal()}
-          >
-            ADD
-          </Button>
-        </Tooltip>
-      </Box>
       <Box className="table-container">
         <GenericTable
           data={books}
@@ -195,9 +223,9 @@ const Book = () => {
           actions={actions}
           total={paginationState.total}
           page={paginationState.page}
+          addButton={addButton}
           rowsPerPage={paginationState.rowsPerPage}
           onPageChange={(newPage, rowsPerPage) => {
-
             setPaginationState((prevState) => ({
               ...prevState,
               page: newPage,
@@ -205,11 +233,10 @@ const Book = () => {
             }));
           }}
           onRowsPerPageChange={(newRowsPerPage) => {
-
             setPaginationState({
               ...paginationState,
               rowsPerPage: newRowsPerPage,
-              page: 0, 
+              page: 0,
             });
           }}
         />

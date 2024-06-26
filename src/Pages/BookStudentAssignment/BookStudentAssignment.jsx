@@ -144,10 +144,12 @@ const BookStudentAssignment = () => {
     setOpenRenewReturnModal(true);
   };
 
+    // Function to handle the click event for issuing a book
   const handleIssueBookClick = () => {
     setOpenIssuanceModal(true);
   };
 
+    // Function to close the renew/return modal and refresh the issued students list
   const handleCloseRenewReturnModal = () => {
     setOpenRenewReturnModal(false);
     if (selectedBook) {
@@ -160,6 +162,7 @@ const BookStudentAssignment = () => {
     
   };
 
+    // Function to close the issuance modal and refresh the issued students list
   const handleCloseIssuanceModal = () => {
     setOpenIssuanceModal(false);
     if (selectedBook) {
@@ -189,6 +192,7 @@ const BookStudentAssignment = () => {
     }
   };
   
+    // Function to handle returning a book for the selected student
   const handleReturnBook = async () => {
     try {
       await updateReturnedDate(selectedStudent._id);
@@ -203,6 +207,7 @@ const BookStudentAssignment = () => {
     }
   };
 
+    // Function to handle page change in the table
   const handlePageChange = (newPage, rowsPerPage) => {
     const maxPage = Math.ceil(assignedBorrowersCount / rowsPerPage) - 1;
     const validNewPage = Math.min(newPage, maxPage);
@@ -212,6 +217,7 @@ const BookStudentAssignment = () => {
     }));
   };
 
+    // Function to handle rows per page change in the table
   const handleRowsPerPageChange = (newRowsPerPage) => {
     setPaginationState((prevState) => ({
       ...prevState,
@@ -273,6 +279,18 @@ const BookStudentAssignment = () => {
     },
   ];
 
+    // Define the issue book button
+  const issueBookBtn = (
+    <Button
+      variant="outlined"
+      startIcon={<AddIconButton />}
+      onClick={handleIssueBookClick}
+      className="issue-book-button"
+    >
+      Assign Borrower
+    </Button>
+)
+
   return (
     <Box className="page-container">
       <Box className="page-form-container">
@@ -303,18 +321,9 @@ const BookStudentAssignment = () => {
           <CardItem
             data={selectedBook}
             columns={columns}
+            issueBookBtn = {issueBookBtn}
             image="Assets/book.png"
           >
-            <Tooltip title="Click to issue a new book" arrow>
-              <Button
-                variant="outlined"
-                startIcon={<AddIconButton />}
-                onClick={handleIssueBookClick}
-                className="issue-book-button"
-              >
-                Issue Book
-              </Button>
-            </Tooltip>
           </CardItem>
           <Box className="table-container">
             <div className="table-content">

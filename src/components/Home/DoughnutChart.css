@@ -25,8 +25,8 @@
 .chart-container .custom-tooltip {
   background-color: #fff;
   border: .0625rem solid #ccc;
-  padding: var(--table-padding);
-  border-radius: var(--spacing-sm);
+  padding: var(--spacing-sm);
+  font-size: medium;
 }
 
 .chart-container .custom-tooltip .label {

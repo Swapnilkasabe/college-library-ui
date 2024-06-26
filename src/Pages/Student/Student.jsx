@@ -1,5 +1,15 @@
 import React, { useState, useEffect } from "react";
-import { Grid, Typography, Button, Box, Tooltip, Dialog, DialogTitle, DialogContent, DialogActions } from "@mui/material";
+import {
+  Grid,
+  Typography,
+  Button,
+  Box,
+  Tooltip,
+  Dialog,
+  DialogTitle,
+  DialogContent,
+  DialogActions,
+} from "@mui/material";
 import StudentModal, { DefaultData } from "../../components/Modals/StudentModal";
 import GenericTable from "../../components/Common/GenericTable";
 import { isEmptyString } from "../../utilities/helper";
@@ -10,20 +20,28 @@ import { useAppContext } from "../../contexts/AppContext.Provider";
 import "../../commonStyles/Pages.css";
 
 const Student = () => {
+    // State to manage list of students
   const [students, setStudents] = useState([]);
+    // State to manage student being edited
   const [editingStudent, setEditingStudent] = useState(DefaultData);
+    // State to manage modal visibility for add/edit
   const [isModalOpen, setIsModalOpen] = useState(false);
+    // State to manage delete confirmation dialog visibility
   const [deleteConfirmationOpen, setDeleteConfirmationOpen] = useState(false);
+    // State to manage the student being deleted
   const [deletingStudent, setDeletingStudent] = useState(null);
 
+    // Accessing the notification handler to display notifications
   const { notificationHandler } = useAppContext();
 
+    // State to manage pagination
   const [paginationState, setPaginationState] = useState({
     total: 0,
     page: 0,
     rowsPerPage: 2,
   });
 
+    // Function to fetch students 
   const fetchStudents = async (page, rowsPerPage) => {
     try {
       const response = await getAllStudents(page, rowsPerPage);
@@ -31,7 +49,7 @@ const Student = () => {
       setStudents(students);
       setPaginationState((prevState) => ({
         ...prevState,
-        total:totalStudentsCount,
+        total: totalStudentsCount,
       }));
     } catch (error) {
       console.error("Error fetching students", error);
@@ -39,8 +57,8 @@ const Student = () => {
     }
   };
 
+    // Effect to fetch students on component mount 
   useEffect(() => {
-
     fetchStudents(paginationState.page, paginationState.rowsPerPage);
   }, [paginationState.page, paginationState.rowsPerPage]);
 
@@ -51,15 +69,35 @@ const Student = () => {
     );
   };
 
+    // Function to open the add/edit modal 
   const closeAddAndEditModal = () => {
     setIsModalOpen(false);
     setEditingStudent(DefaultData);
   };
 
+    // Function to handle adding or updating a student
   const handleAddStudent = async (newStudent) => {
     try {
       let response;
       if (newStudent?._id) {
+
+        // Checking for existing student with the same ID, email, or phone number
+        const existingStudent = students.find(student =>
+          (student.studentId === newStudent.studentId ||
+           student.email === newStudent.email ||
+           student.phoneNumber === newStudent.phoneNumber) &&
+          student._id !== newStudent._id  
+        );
+  
+        if (existingStudent) {
+          notificationHandler(
+            true,
+            "Another student with the provided ID, email, or phone number already exists",
+            "error"
+          );
+          return;
+        }
+        // Validating the student data
         const { errors, isError } = studentUpdateValidation(newStudent);
         if (isError) {
           notificationHandler(
@@ -69,8 +107,27 @@ const Student = () => {
           );
           return;
         }
+        // Updating the student
         response = await updateStudent(newStudent.studentId, newStudent);
       } else {
+
+        // Checking for existing student with the same ID, email, or phone number
+        const existingStudent = students.find(student =>
+          student.studentId === newStudent.studentId ||
+          student.email === newStudent.email ||
+          student.phoneNumber === newStudent.phoneNumber
+        );
+  
+        if (existingStudent) {
+          notificationHandler(
+            true,
+            "Student with the provided ID, email, or phone number already exists",
+            "error"
+          );
+          return;
+        }
+       
+        // Validating the student data
         const { errors, isError } = studentCreationValidation(newStudent);
         if (isError) {
           notificationHandler(
@@ -80,6 +137,7 @@ const Student = () => {
           );
           return;
         }
+          // Creating a new student
         response = await createStudent(newStudent);
       }
 
@@ -102,11 +160,13 @@ const Student = () => {
     }
   };
 
+  // Function to handle student deletion
   const handleDeleteStudent = (student) => {
     setDeletingStudent(student.studentId);
     setDeleteConfirmationOpen(true);
   };
 
+  // Function to confirm student deletion
   const confirmDelete = async () => {
     try {
       await deleteStudent(deletingStudent);
@@ -119,6 +179,7 @@ const Student = () => {
     setDeleteConfirmationOpen(false);
   };
 
+  // Define table columns for students
   const columns = [
     { key: "name", label: "Name" },
     { key: "studentId", label: "ID" },
@@ -126,6 +187,7 @@ const Student = () => {
     { key: "phoneNumber", label: "Phone" },
   ];
 
+  // Define table actions 
   const actions = [
     {
       handler: openAddAndEditModal,
@@ -139,6 +201,20 @@ const Student = () => {
     },
   ];
 
+    // Define the add button for new students
+  const addButton = (
+    <Tooltip title="Click to add a new student" arrow>
+      <Button
+        className="add-button"
+        variant="outlined"
+        startIcon={<AddIconButton />}
+        onClick={() => openAddAndEditModal()}
+      >
+        ADD
+      </Button>
+    </Tooltip>
+  );
+
   return (
     <Grid
       container
@@ -146,30 +222,19 @@ const Student = () => {
       alignItems="center"
       className="form-container"
     >
-      <Typography variant="h5" className="heading" >
+      <Typography variant="h5" className="heading" sx={{ overflowX: 'auto' }}>
         Student Page
       </Typography>
-      <Box className="button-container">
-        <Tooltip title="Click to add a new student" arrow>
-          <Button
-            variant="outlined"
-            startIcon={<AddIconButton />}
-            onClick={() => openAddAndEditModal()}
-          >
-            ADD
-          </Button>
-        </Tooltip>
-      </Box>
-      <Box className="table-container">
-      <GenericTable
+      <Box className="table-container" sx={{ overflowX: "auto", width: "100%" }}>
+        <GenericTable
           data={students}
           columns={columns}
           actions={actions}
           total={paginationState.total}
           page={paginationState.page}
+          addButton={addButton}
           rowsPerPage={paginationState.rowsPerPage}
           onPageChange={(newPage, rowsPerPage) => {
-
             setPaginationState((prevState) => ({
               ...prevState,
               page: newPage,
@@ -177,14 +242,12 @@ const Student = () => {
             }));
           }}
           onRowsPerPageChange={(newRowsPerPage) => {
-
             setPaginationState({
               ...paginationState,
               rowsPerPage: newRowsPerPage,
-              page: 0, 
+              page: 0,
             });
           }}
-          
         />
       </Box>
       <StudentModal

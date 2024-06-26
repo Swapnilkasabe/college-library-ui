@@ -48,7 +48,7 @@ const DoughnutChart = ({ totalBooks, totalAvailableBooks, totalIssuedBooks, tota
               ))}
             </Pie>
             <Tooltip content={<CustomTooltip />} />
-            <Legend wrapperStyle={{ fontSize: '14px', fontWeight: 'bold', textTransform: 'capitalize' }} />
+            <Legend wrapperStyle={{ fontSize: '13px',  textTransform: 'capitalize' }} />
           </PieChart>
         </ResponsiveContainer>
       </Paper>
