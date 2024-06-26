@@ -3,7 +3,7 @@ import PropTypes from "prop-types";
 import { Card, CardContent, Typography, Box } from "@mui/material";
 import "./CardItem.css";
 
-const CardItem = ({ data, columns, image, children }) => {
+const CardItem = ({ data, columns, image, issueBookBtn, children }) => {
   // Determine primary column based on columns array
   const primaryColumn = columns[0];
   const otherColumns = columns.slice(1);
@@ -13,7 +13,7 @@ const CardItem = ({ data, columns, image, children }) => {
       <CardContent className="card-content">
         {image && (
           <Box className="card-image">
-            <img src={image} alt="" />
+            <img src={image} alt={data[primaryColumn.key]} />
           </Box>
         )}
         <Box className="card-details">
@@ -31,13 +31,15 @@ const CardItem = ({ data, columns, image, children }) => {
               <strong>{column.label}:</strong> {data[column.key]}
             </Typography>
           ))}
+          {issueBookBtn && (
+            <Box className="issue-book-btn-container">{issueBookBtn}</Box>
+          )}
         </Box>
       </CardContent>
       {children && <Box className="card-action">{children}</Box>}
     </Card>
   );
 };
-
 // Defining the types for the props
 CardItem.propTypes = {
   data: PropTypes.object.isRequired,
@@ -47,8 +49,9 @@ CardItem.propTypes = {
       label: PropTypes.string.isRequired,
     })
   ).isRequired,
-  image: PropTypes.string.isRequired,
-  children: PropTypes.node.isRequired,
+  image: PropTypes.string,
+  issueBookBtn: PropTypes.node,
+  children: PropTypes.node,
 };
 
 export default CardItem;

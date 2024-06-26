@@ -1,17 +1,16 @@
 import React from "react";
-import Sidebar from '../Sidebar/Sidebar.jsx';
-import {useAppContext} from '../../contexts/AppContext.Provider'
-import "./Dashboard.css";
+import Sidebar from "../Sidebar/Sidebar";
+import { useAppContext } from "../../contexts/AppContext.Provider";
 import { Grid } from "@mui/material";
+import "./Dashboard.css";
 
 // Dashboard component renders the main layout of the application, including the sidebar navigation and content display
-const Dashboard = ({children}) => {
-    // Accessing context values
+const Dashboard = ({ children }) => {
+      // Accessing context values
   const { active, setActive, sidebarOpen, setSidebarOpen } = useAppContext();
 
-
   return (
-    <Grid container  className="dashboard">
+    <Grid container className="dashboard">
       <Grid item className="dashboard-card">
         {/* Sidebar component for navigation  */}
         <Sidebar
@@ -22,7 +21,7 @@ const Dashboard = ({children}) => {
         />
         {/* Content area for rendering different components based on the active sidebar item */}
         <Grid item >
-         {children}
+          {children}
         </Grid>
       </Grid>
     </Grid>
