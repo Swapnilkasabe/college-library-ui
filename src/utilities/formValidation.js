@@ -27,16 +27,29 @@ export const loginValidation = (values) => {
 };
 
 // Function to validate signup form fields
+// Function to validate signup form fields
 export const signupValidation = (values) => {
-  const errors = { username: "", email: "", password: "", confirmPassword: "" };
+  const errors = {
+    firstName: "",
+    lastName: "",
+    email: "",
+    password: "",
+    confirmPassword: "",
+  };
   let isError = false;
   // Regular expression to validate email
   const regex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
-  // Check if username is provided
-  if (isEmptyString(values.username)) {
+  // Check if firstName is provided
+  if (isEmptyString(values.firstName)) {
     isError = true;
-    errors.username = "Username is required";
+    errors.firstName = "First Name is required";
+  }
+
+  // Check if lastName is provided
+  if (isEmptyString(values.lastName)) {
+    isError = true;
+    errors.lastName = "Last Name is required";
   }
 
   // Check if email is provided

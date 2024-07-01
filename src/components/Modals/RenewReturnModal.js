@@ -12,7 +12,6 @@ const RenewReturnModal = ({
   actionType,
   bookDetails,
 }) => {
-  console.log("book details in renew return modal", bookDetails);
   if (!bookDetails) return null;
 
   const { title, author, dueDate } = bookDetails;

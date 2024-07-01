@@ -29,7 +29,7 @@ const DoughnutChart = ({ totalBooks, totalAvailableBooks, totalIssuedBooks, tota
   ]), [totalBooks, totalAvailableBooks, totalIssuedBooks, totalOverdueBooks]);
 
   return (
-    <Grid item xs={12} md={6} lg={4} xl={3}>
+   
       <Paper className="chart-container">
         <Typography variant="h6" className="chart-title">
           Books Overview
@@ -52,7 +52,7 @@ const DoughnutChart = ({ totalBooks, totalAvailableBooks, totalIssuedBooks, tota
           </PieChart>
         </ResponsiveContainer>
       </Paper>
-    </Grid>
+
   );
 };
 
