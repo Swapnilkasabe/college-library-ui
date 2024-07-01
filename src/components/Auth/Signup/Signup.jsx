@@ -12,25 +12,23 @@ import { userSignup } from "../../../services/user.service";
 import "./Signup.css";
 import { useAppContext } from "../../../contexts/AppContext.Provider";
 
-
 const Signup = () => {
   const [formData, setFormData] = useState({
-    username: "",
+    firstName: "",
+    lastName: "",
     email: "",
     password: "",
     confirmPassword: "",
   });
   const [formErrors, setFormErrors] = useState({});
   const [registrationSuccess, setRegistrationSuccess] = useState(false);
-   // Access state from context for displaying notification
-   const { notificationHandler } = useAppContext();
-
+     // Access state from context for displaying notification
+  const { notificationHandler } = useAppContext();
   const navigate = useNavigate();
-// Toggle between signup and login
+  // Toggle between signup and login
   const handleToggle = () => {
     navigate("/login");
   };
-
   // Handle form submission
   const handleSubmit = async (e) => {
     e.preventDefault(); // Prevent default form submission behavior
@@ -56,8 +54,8 @@ const Signup = () => {
     }
   };
 // Handle input change  
-const handleInputChange = (e) => {
-const { name, value } = e.target;
+  const handleInputChange = (e) => {
+    const { name, value } = e.target;
     setFormData((prevFormData) => ({
       ...prevFormData,
       [name]: value,
@@ -88,23 +86,41 @@ const { name, value } = e.target;
             {!registrationSuccess ? "Signup" : ""}
           </Typography>
           {!registrationSuccess ? (
-            // If registration is not successful, displaying the signup form
+              // If registration is not successful, displaying the signup form
             <form className="signup-form" onSubmit={handleSubmit}>
               <TextField
-                id="username"
-                name="username"
-                label="Username"
+                id="firstName"
+                name="firstName"
+                label="First Name"
                 variant="outlined"
                 margin="normal"
                 className="signup-field"
-                value={formData.username}
+                value={formData.firstName}
                 onChange={handleInputChange}
                 onFocus={handleFocus}
                 onBlur={handleBlur}
-                error={!!formErrors.username}
+                error={!!formErrors.firstName}
                 helperText={
-                  formErrors.username && (
-                    <span className="error-message">{formErrors.username}</span>
+                  formErrors.firstName && (
+                    <span className="error-message">{formErrors.firstName}</span>
+                  )
+                }
+              />
+              <TextField
+                id="lastName"
+                name="lastName"
+                label="Last Name"
+                variant="outlined"
+                margin="normal"
+                className="signup-field"
+                value={formData.lastName}
+                onChange={handleInputChange}
+                onFocus={handleFocus}
+                onBlur={handleBlur}
+                error={!!formErrors.lastName}
+                helperText={
+                  formErrors.lastName && (
+                    <span className="error-message">{formErrors.lastName}</span>
                   )
                 }
               />

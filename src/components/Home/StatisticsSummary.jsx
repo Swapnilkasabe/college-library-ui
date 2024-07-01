@@ -119,22 +119,26 @@ const StatisticsSummary = ({ isDrawerOpen }) => {
             </Paper>
           </Grid>
 
-          <Grid item xs={12}>
-            <div className="charts-container">
-              <div className="pie-chart">
+          <Grid item xs={12} sm={6} md={5}>
+            {/* <div className="charts-container"> */}
+              {/* <div className="pie-chart"> */}
                 <DoughnutChart
                   totalBooks={totalBooks}
                   totalAvailableBooks={totalAvailableBooks}
                   totalIssuedBooks={totalIssuedBooks}
                   totalOverdueBooks={totalOverdueBooks}
                 />
-              </div>
-              <div className="bar-chart">
-                <ResponsiveContainer width="100%" height={250}>
+                </Grid>
+                <Grid item xs={12} sm={6} md={1}/>
+                <Grid item xs={12} sm={6} md={5}>
+              {/* </div> */}
+              {/* <div className="bar-chart"> */}
+              <Paper elevation={3} className={"bar-chart1"}>
+                <ResponsiveContainer height={"100%"} width={"80%"} >
                   <BarChart data={data}>
                     <XAxis
                       dataKey="name"
-                      tick={{ fontSize: 15 }}
+                      tick={{ fontSize: 12 }}
                       tickLine={false}
                     />
                     <YAxis allowDecimals={false} />
@@ -150,8 +154,9 @@ const StatisticsSummary = ({ isDrawerOpen }) => {
                     />
                   </BarChart>
                 </ResponsiveContainer>
-              </div>
-            </div>
+                </Paper>
+              {/* </div>
+            </div> */}
           </Grid>
         </Grid>
       )}
