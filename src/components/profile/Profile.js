@@ -47,8 +47,6 @@ const Profile = () => {
     }
   }, [isLogin, navigate]);
 
-  const handleEditProfile = () => {};
-
   // Function to handle back button click
   const handleBack = () => {
     navigate("/");

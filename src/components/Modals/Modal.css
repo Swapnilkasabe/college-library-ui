@@ -12,6 +12,37 @@
   box-shadow: 0 var(--spacing-xs) var(--spacing-sm) rgba(0, 0, 0, 0.1);
 }
 
+@media (min-width: 560px) {
+  .modal-content {
+    width: 100%;
+    max-width: 200px;
+    padding: var(--spacing-md);
+  }
+}
+@media (max-width: 560px) {
+  .modal-content {
+    width: 100%;
+    max-width: 200px;
+    padding: var(--spacing-md);
+  }
+}
+
+@media (min-width: 855px) {
+  .modal-content {
+    width: 100%;
+    max-width: 300px;
+    padding: var(--spacing-md);
+  }
+}
+
+@media (min-width: 1230px) {
+  .modal-content {
+    width: 100%;
+  max-width: 400px;
+    padding: var(--spacing-lg);
+    min-height: 350px;
+  }
+}
 
 .modal-error {
   position: absolute;
